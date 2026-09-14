@@ -48,4 +48,10 @@ Image-based VIN extraction can follow as a separate capability.
 
 ## Status
 
-Blueprint version 0.1 — September 14, 2026.
+## Client feedback
+
+Every lifecycle stage and step includes a `+` control. Feedback is stored as structured JSON in the reviewer's browser using `localStorage`. The **Export feedback** control downloads a portable JSON file containing target IDs, action type, author, comment, timestamp, and review status.
+
+The canonical process structure is maintained in `blueprint-data.js`. Because a static browser page cannot rewrite repository files directly, exported feedback should be reviewed and merged into that source file. A future authenticated backend can provide shared, server-side persistence.
+
+Blueprint version 0.2 — September 14, 2026.
