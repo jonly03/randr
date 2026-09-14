@@ -23,7 +23,7 @@
       <a href="#automations">Automations</a>
       <a href="#discovery">Discovery</a>
     </nav>
-    <div class="version"><span></span> Blueprint v0.1</div>
+    <button class="export-button" id="export-feedback" type="button">Export feedback <span id="feedback-count">0</span></button><div class="version"><span></span> Blueprint v0.2</div>
   </header>
 
   <main>
@@ -181,6 +181,34 @@
     <p>Convert every qualified auto-glass request into a correctly identified, customer-approved, successfully completed, accurately invoiced, and fully paid job.</p>
     <div class="dialog-callout">The workflow should reduce repetitive data entry without removing human judgment where fitment, pricing, safety, or exceptions require it.</div>
   </dialog>
+  <dialog id="feedback-dialog" class="feedback-dialog">
+    <button class="close feedback-close" aria-label="Close">×</button>
+    <div class="eyebrow">CLIENT FEEDBACK</div>
+    <h2 id="feedback-title">Add feedback</h2>
+    <p id="feedback-context" class="feedback-context"></p>
+    <form id="feedback-form">
+      <input type="hidden" id="feedback-target-type">
+      <input type="hidden" id="feedback-stage-id">
+      <input type="hidden" id="feedback-step-id">
+      <label for="feedback-action">What would you like to do?</label>
+      <select id="feedback-action">
+        <option value="comment">Add a comment</option>
+        <option value="edit">Suggest an edit</option>
+        <option value="add">Suggest an additional step</option>
+        <option value="remove">Suggest removing this</option>
+      </select>
+      <label for="feedback-author">Your name <span>(optional)</span></label>
+      <input id="feedback-author" type="text" autocomplete="name" placeholder="Name">
+      <label for="feedback-text">Comment or proposed wording</label>
+      <textarea id="feedback-text" rows="5" required placeholder="Share what should change and why…"></textarea>
+      <div class="feedback-actions">
+        <button type="button" class="button secondary feedback-cancel">Cancel</button>
+        <button type="submit" class="button primary">Save feedback</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="blueprint-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
