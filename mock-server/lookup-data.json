@@ -1,0 +1,28 @@
+{
+  "vehicles": [
+    {
+      "vin": "1C4HJXDG5MW625672",
+      "year": "2021",
+      "make": "Jeep",
+      "model": "Wrangler Unlimited Sport",
+      "parts": {
+        "Windshield": [
+          {"partNumber":"FW04718GTY","description":"Windshield — Solar, Acoustic","features":["Green tint","Acoustic interlayer"]},
+          {"partNumber":"FW04719GTY","description":"Windshield — Rain Sensor","features":["Green tint","Rain sensor bracket"]}
+        ],
+        "Back Glass": [
+          {"partNumber":"FB28613GTY","description":"Back Glass — Heated","features":["Privacy tint","Heated grid"]}
+        ],
+        "Door Glass": [
+          {"partNumber":"FD28620GTY","description":"Front Door Glass — Driver Side","features":["Green tint","Tempered"]},
+          {"partNumber":"FD28619GTY","description":"Front Door Glass — Passenger Side","features":["Green tint","Tempered"]}
+        ]
+      }
+    }
+  ],
+  "catalog": {
+    "years": ["2021", "2020", "2019"],
+    "makes": {"2021":["Jeep","Toyota"],"2020":["Jeep"],"2019":["Honda"]},
+    "models": {"2021|Jeep":["Wrangler Unlimited Sport","Grand Cherokee"],"2021|Toyota":["Camry"],"2020|Jeep":["Wrangler"],"2019|Honda":["Accord"]}
+  }
+}
