@@ -1,82 +1,178 @@
-const stages = {
-  acquire: {
-    number: "Stage 01", title: "Acquire", status: "Confirmed process", color: "#36a878",
-    purpose: "Create awareness and preference before a customer enters the operational workflow.",
-    steps: ["Build digital visibility and trust", "Educate insured customers about shop choice", "Generate direct inquiries and referrals"],
-    rule: "Digital strategy serves two paths: direct demand and preference that returns through Safelite."
-  },
-  intake: {
-    number: "Stage 02", title: "Intake", status: "Confirmed process", color: "#36a878",
-    purpose: "Capture the minimum information needed to begin identifying the required glass.",
-    steps: ["Receive a phone call or text", "Capture a typed VIN or VIN image", "Capture requested glass type", "Identify the originating client channel"],
-    rule: "For direct intake, request the VIN—not year, make, and model. Those are derived from the lookup."
-  },
-  identify: {
-    number: "Stage 03", title: "Identify & Quote", status: "Confirmed through part identification", color: "#36a878",
-    purpose: "Determine the correct vehicle and glass parts, then prepare a price for customer approval.",
-    steps: ["Validate the 17-character VIN", "Select Windshield or Back Glass", "Run MyGrant VIN lookup", "Capture year, make, and model", "Capture primary, interchangeable, and OEM part numbers", "Review features and molding notes", "Calculate quote and issue invoice"],
-    rule: "MyGrant lookup is mapped. Quote calculation and invoice-generation rules still require discovery."
-  },
-  approve: {
-    number: "Stage 04", title: "Approve & Schedule", status: "Partially understood", color: "#e8a04c",
-    purpose: "Turn an accepted price into a service-ready appointment.",
-    steps: ["Send invoice or quote", "Receive customer approval", "Collect the vehicle service address", "Select service date and time"],
-    rule: "Do not collect the service address until after the customer approves the invoice."
-  },
-  source: {
-    number: "Stage 05", title: "Source & Prepare", status: "Discovery required", color: "#b7c0bb",
-    purpose: "Ensure the correct glass and supporting materials are ready before dispatch.",
-    steps: ["Confirm inventory availability", "Order or reserve the glass", "Confirm molding and related materials", "Prepare job for technician"],
-    rule: "These are candidate steps. The actual sourcing workflow has not yet been documented."
-  },
-  service: {
-    number: "Stage 06", title: "Perform Service", status: "Discovery required", color: "#b7c0bb",
-    purpose: "Complete the installation safely and capture evidence of completion.",
-    steps: ["Assign technician", "Travel to service location", "Verify vehicle and part", "Install glass", "Document completion and exceptions"],
-    rule: "Technician workflow, proof requirements, and exception paths still need to be observed."
-  },
-  collect: {
-    number: "Stage 07", title: "Invoice & Collect", status: "Discovery required", color: "#b7c0bb",
-    purpose: "Close the financial loop accurately for each client channel.",
-    steps: ["Finalize invoice", "Submit channel-specific documentation", "Receive payment", "Reconcile job and payment", "Follow up on exceptions"],
-    rule: "Direct, auction, and insurance payment paths may differ and must be mapped separately."
-  },
-  grow: {
-    number: "Stage 08", title: "Retain & Grow", status: "Partially understood", color: "#e8a04c",
-    purpose: "Turn completed work into trust, referrals, reviews, and future preferred-shop demand.",
-    steps: ["Confirm customer satisfaction", "Request review", "Invite referral", "Attribute source and campaign", "Measure preferred-shop requests"],
-    rule: "A key strategic KPI is how often digital exposure leads insured customers to request R&R through Safelite."
-  }
-};
-
+const stages = window.RR_BLUEPRINT.stages;
+const STORAGE_KEY = "rr-blueprint-feedback-v1";
 const detail = document.querySelector("#stage-detail");
-const buttons = [...document.querySelectorAll(".stage")];
+const stageButtons = [...document.querySelectorAll(".stage")];
+const feedbackDialog = document.querySelector("#feedback-dialog");
+const feedbackForm = document.querySelector("#feedback-form");
+const toast = document.querySelector("#toast");
+let activeStage = "acquire";
+
+function getFeedback() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveFeedback(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  updateFeedbackCounts();
+}
+
+function feedbackFor(stageId, stepId) {
+  return getFeedback().filter(item =>
+    item.stageId === stageId && (stepId === undefined || item.stepId === stepId)
+  );
+}
+
+function addStageControls() {
+  stageButtons.forEach(button => {
+    const plus = document.createElement("span");
+    plus.className = "feedback-plus stage-plus";
+    plus.setAttribute("role", "button");
+    plus.setAttribute("tabindex", "0");
+    plus.setAttribute("aria-label", "Add feedback for " + stages[button.dataset.stage].title);
+    plus.textContent = "+";
+    plus.addEventListener("click", event => {
+      event.stopPropagation();
+      openFeedback("stage", button.dataset.stage);
+    });
+    plus.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        event.stopPropagation();
+        openFeedback("stage", button.dataset.stage);
+      }
+    });
+    const count = document.createElement("span");
+    count.className = "feedback-badge stage-feedback-count";
+    button.append(plus, count);
+  });
+}
 
 function renderStage(key) {
+  activeStage = key;
   const stage = stages[key];
+  const stepItems = stage.steps.map(step => {
+    const count = feedbackFor(key, step.id).length;
+    return `<li>
+      <span>${step.text}</span>
+      <button class="feedback-plus step-plus" type="button" data-step-id="${step.id}" aria-label="Add feedback for ${step.text}">+</button>
+      <em class="feedback-badge ${count ? "visible" : ""}">${count || ""}</em>
+    </li>`;
+  }).join("");
+  const stageCount = feedbackFor(key).length;
   detail.innerHTML = `
     <div class="detail-intro">
       <div class="detail-status"><i style="background:${stage.color}"></i>${stage.status}</div>
-      <h3>${stage.number} · ${stage.title}</h3>
+      <div class="detail-title-row">
+        <h3>${stage.number} · ${stage.title}</h3>
+        <button class="feedback-plus detail-plus" type="button" aria-label="Add feedback for ${stage.title}">+</button>
+      </div>
       <p>${stage.purpose}</p>
+      <small class="detail-feedback-summary">${stageCount ? stageCount + " saved feedback item" + (stageCount === 1 ? "" : "s") : "No feedback yet"}</small>
     </div>
     <div class="detail-block">
       <h4>Known or candidate steps</h4>
-      <ul>${stage.steps.map(step => `<li>${step}</li>`).join("")}</ul>
+      <ul class="editable-steps">${stepItems}</ul>
     </div>
     <div class="detail-block">
       <h4>Business rule / boundary</h4>
       <div class="rule"><strong>IMPORTANT</strong>${stage.rule}</div>
     </div>`;
+
+  detail.querySelector(".detail-plus").addEventListener("click", () => openFeedback("stage", key));
+  detail.querySelectorAll(".step-plus").forEach(button => {
+    button.addEventListener("click", () => openFeedback("step", key, button.dataset.stepId));
+  });
 }
 
-buttons.forEach(button => {
+function openFeedback(type, stageId, stepId = "") {
+  const stage = stages[stageId];
+  const step = stepId ? stage.steps.find(item => item.id === stepId) : null;
+  document.querySelector("#feedback-target-type").value = type;
+  document.querySelector("#feedback-stage-id").value = stageId;
+  document.querySelector("#feedback-step-id").value = stepId;
+  document.querySelector("#feedback-title").textContent = type === "stage" ? "Comment on " + stage.title : "Comment on this step";
+  document.querySelector("#feedback-context").textContent = step ? stage.title + " → " + step.text : stage.number + " · " + stage.purpose;
+  document.querySelector("#feedback-action").value = "comment";
+  document.querySelector("#feedback-text").value = "";
+  feedbackDialog.showModal();
+  setTimeout(() => document.querySelector("#feedback-text").focus(), 50);
+}
+
+function closeFeedback() {
+  feedbackDialog.close();
+  feedbackForm.reset();
+}
+
+feedbackForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const items = getFeedback();
+  const stageId = document.querySelector("#feedback-stage-id").value;
+  const stepId = document.querySelector("#feedback-step-id").value || null;
+  items.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : "feedback-" + Date.now(),
+    targetType: document.querySelector("#feedback-target-type").value,
+    stageId,
+    stepId,
+    action: document.querySelector("#feedback-action").value,
+    author: document.querySelector("#feedback-author").value.trim() || null,
+    text: document.querySelector("#feedback-text").value.trim(),
+    createdAt: new Date().toISOString(),
+    status: "proposed"
+  });
+  saveFeedback(items);
+  closeFeedback();
+  renderStage(activeStage);
+  showToast("Feedback saved on this device");
+});
+
+function updateFeedbackCounts() {
+  const all = getFeedback();
+  document.querySelector("#feedback-count").textContent = all.length;
+  stageButtons.forEach(button => {
+    const count = all.filter(item => item.stageId === button.dataset.stage).length;
+    const badge = button.querySelector(".stage-feedback-count");
+    badge.textContent = count || "";
+    badge.classList.toggle("visible", count > 0);
+  });
+}
+
+function exportFeedback() {
+  const payload = {
+    schemaVersion: "1.0",
+    blueprintVersion: window.RR_BLUEPRINT.version,
+    exportedAt: new Date().toISOString(),
+    business: "R&R Finest Auto Glass",
+    feedback: getFeedback()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: "application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "rr-blueprint-feedback-" + new Date().toISOString().slice(0, 10) + ".json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showToast("Structured feedback exported");
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+stageButtons.forEach(button => {
   button.addEventListener("click", () => {
-    buttons.forEach(item => item.classList.remove("active"));
+    stageButtons.forEach(item => item.classList.remove("active"));
     button.classList.add("active");
     renderStage(button.dataset.stage);
   });
 });
+
+document.querySelector("#export-feedback").addEventListener("click", exportFeedback);
+document.querySelector(".feedback-close").addEventListener("click", closeFeedback);
+document.querySelector(".feedback-cancel").addEventListener("click", closeFeedback);
+feedbackDialog.addEventListener("click", event => { if (event.target === feedbackDialog) closeFeedback(); });
 
 const sections = [...document.querySelectorAll("main section[id]")];
 const navLinks = [...document.querySelectorAll("nav a")];
@@ -87,11 +183,11 @@ const observer = new IntersectionObserver(entries => {
 }, {rootMargin: "-20% 0px -65% 0px", threshold: [0, .2, .5]});
 sections.forEach(section => observer.observe(section));
 
-const dialog = document.querySelector("#outcome-dialog");
-document.querySelector("[data-open='outcome']").addEventListener("click", () => dialog.showModal());
-dialog.querySelector(".close").addEventListener("click", () => dialog.close());
-dialog.addEventListener("click", event => {
-  if (event.target === dialog) dialog.close();
-});
+const outcomeDialog = document.querySelector("#outcome-dialog");
+document.querySelector("[data-open='outcome']").addEventListener("click", () => outcomeDialog.showModal());
+outcomeDialog.querySelector(".close").addEventListener("click", () => outcomeDialog.close());
+outcomeDialog.addEventListener("click", event => { if (event.target === outcomeDialog) outcomeDialog.close(); });
 
+addStageControls();
+updateFeedbackCounts();
 renderStage("acquire");
