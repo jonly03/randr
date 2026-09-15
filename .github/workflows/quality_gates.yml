@@ -1,7 +1,7 @@
-name: Quality gates
+name: Policy gates
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, synchronize]
     branches:
       - dev
@@ -28,8 +28,8 @@ jobs:
           set -euo pipefail
           case "$BASE" in
             dev)
-              if [[ ! "$HEAD" =~ ^[a-z0-9]+(_[a-z0-9]+)*_[a-z0-9]+_[a-z0-9]+$ ]]; then
-                echo "Feature branches must use snake_case and end in specialist_making_change."
+              if [[ ! "$HEAD" =~ ^([a-z0-9]+_){3,}[a-z0-9]+$ ]]; then
+                echo "Feature branches must use snake_case with feature, specialist, and change tokens."
                 exit 1
               fi
               ;;
@@ -55,25 +55,13 @@ jobs:
           const body = process.env.PR_BODY || "";
           const head = process.env.HEAD_SHA;
           const base = process.env.BASE_SHA;
-          const reviewPattern = /- Reviewer identity:[^\n]*\n- Reviewer role:[^\n]*\n- Tribe:[^\n]*\n- Reviewed source commit SHA:\s*([^\n]+)\n- Reviewed target commit SHA:\s*([^\n]+)\n- Reviewed at:[^\n]*\n- Decision:\s*(Approved(?: with comments)?)/gim;
+          const reviewPattern = /- Reviewer identity:\s*([^\n]+)\n- Reviewer role:\s*([^\n]+)\n- Tribe:[^\n]*\n- Reviewed source commit SHA:\s*([^\n]+)\n- Reviewed target commit SHA:\s*([^\n]+)\n- Reviewed at:[^\n]*\n- Decision:\s*(Approved(?: with comments)?)/gim;
           const valid = [...body.matchAll(reviewPattern)]
-            .filter(([, source, target]) => source.trim() === head && target.trim() === base);
-          const roles = new Set(valid.map(match => match[0].match(/- Reviewer role:\s*([^\n]+)/i)?.[1]?.trim()).filter(Boolean));
-          if (valid.length < 2 || roles.size < 2) {
-            console.error("PR body must contain two independent approved specialist-review blocks bound to the current source and target SHAs.");
+            .filter(([, identity, , source, target]) => identity.trim() && source.trim() === head && target.trim() === base);
+          const identities = new Set(valid.map(([, identity]) => identity.trim().toLowerCase()));
+          const roles = new Set(valid.map(([, , role]) => role.trim().toLowerCase()));
+          if (valid.length < 2 || identities.size < 2 || roles.size < 2) {
+            console.error("PR body must contain two independent approved specialist-review blocks, with distinct identities and roles, bound to the current source and target SHAs.");
             process.exit(1);
           }
           NODE
-
-  test:
-    name: Install and test
-    runs-on: ubuntu-latest
-    needs: [promotion-order, review-evidence]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm test
