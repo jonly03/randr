@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T02:00:00Z",
+  "updatedAt": "2026-09-15T02:30:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -27,8 +27,8 @@
       "id": "RR-007",
       "title": "Frontend/API integration",
       "type": "Feature",
-      "status": "ready",
-      "priority": "Next",
+      "status": "in-progress",
+      "priority": "Current",
       "outcome": "Route the client workflow through OAuth PKCE and the protected Express mock API.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
