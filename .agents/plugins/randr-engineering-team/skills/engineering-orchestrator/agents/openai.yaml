@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Orchestrator"
+  short_description: "Coordinate R&R specialists and release gates"
+  default_prompt: "Assess the active R&R milestone and coordinate the relevant specialists."
