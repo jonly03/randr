@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready
+In Progress
 
 ## Desired outcome
 
@@ -54,4 +54,3 @@ The client workflow obtains a demo OAuth access token with Authorization Code an
 - The current demo authorization endpoint does not authenticate a person.
 - Redirect-driven authorization can discard unsaved workflow state unless it is deliberately restored.
 - Supporting both Express and GitHub Pages must not silently downgrade an operational session to public mock data.
-
