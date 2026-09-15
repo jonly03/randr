@@ -36,12 +36,12 @@ Each arrow is a pull request. A source branch cannot skip a target branch.
 6. `prod` must match the deployed production revision and immutable artifact digest recorded in the release manifest.
 7. The promotion PR records the exact source and target commit SHAs when opened and again when approved.
 8. During the current sequential MLP workflow, the source branch is frozen while its promotion PR is open.
-9. Any source update invalidates reports, owner approval, and checks. A material target update requires conflict analysis and refreshes every affected approval or check.
+9. Any source or target head update invalidates reports, owner approval, and checks and requires conflict analysis plus fresh evidence.
 10. Repository configuration, deployment configuration, and secret-setting changes follow PR-equivalent review and audit controls; secret values are never recorded.
 
 ## Release manifest
 
-Before promotion to `prod`, create a snake-case Markdown manifest under `project/releases/`. It records:
+Before production approval, create an immutable candidate manifest with a snake-case Markdown filename under `project/releases/`. It records:
 
 - Release identifier and timestamp
 - Complete promotion-PR chain
@@ -51,9 +51,9 @@ Before promotion to `prod`, create a snake-case Markdown manifest under `project
 - Deployment platform record or identifier
 - Automated, manual, staging, and security evidence
 - Named rollback revision and artifact digest
-- Approver identity and approval timestamp
+- The location and required fields of the final approval attestation
 
-The deployed revision is not accepted until its digest and health evidence match the manifest.
+Final approval does not modify the candidate manifest. It is retained as an immutable PR or deployment attestation containing approver identity, timestamp, candidate-manifest commit SHA, current source and target SHAs, and accepted residual risks. The deployed revision is not accepted until its digest and health evidence match the candidate manifest and its final attestation.
 
 ## Emergency rollback
 
