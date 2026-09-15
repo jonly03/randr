@@ -44,3 +44,15 @@
 - Reason: Consumers can discover, authorize, and exercise the API without relying on undocumented implementation details.
 - Constraint: The Swagger UI and raw contract are disabled by default in production and must be explicitly enabled and access-controlled when operationally required.
 
+## ADR-007: Deploy the MLP as a containerized modular monolith
+
+- Date: 2026-09-15
+- Status: Accepted
+- Decision: Package the client interface, Blueprint, delivery board, Express API, API documentation, and lookup-provider boundary as one containerized application served from one origin.
+- Hosting direction: Use Render with a Docker deployment for the MLP staging environment. Retain Cloud Run as a possible later production target without committing to a migration.
+- Reason: One deployable application reduces OAuth callback, CORS, configuration, versioning, and operational complexity while the product and MyGrant integration are still being validated.
+- Internal boundary: Keep the mock and MyGrant implementations behind the lookup-provider contract so modularity does not depend on separate deployments.
+- GitHub Pages: Retain it only as a public/static demonstration surface, not as the operational application host.
+- Extraction rule: Separate Playwright into a worker only when measured latency, concurrency, failure isolation, security, or independent-scaling requirements justify the additional distributed-system complexity.
+- Delivery rule: Execute the roadmap sequentially and obtain the project owner's explicit approval before beginning every step.
+
