@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feedback Synthesizer"
+  short_description: "Turn client and delivery feedback into traceable outcomes"
+  default_prompt: "Synthesize the supplied client and engineering feedback into outcomes, acceptance criteria, risks, and a green/yellow/red recommendation."

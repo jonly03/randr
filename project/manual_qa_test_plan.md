@@ -4,7 +4,7 @@
 
 | Field | Tester entry |
 |---|---|
-| Plan version | 1.0 |
+| Plan version | 1.1 |
 | Branch / commit | |
 | Test date and time | |
 | Tester | |
@@ -23,6 +23,8 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 - error/recovery behavior;
 - static-demo labeling and client-feedback export;
 - API documentation access appropriate to the environment.
+- live delivery-control rendering, authenticated agent-event ingestion, and SSE updates;
+- GitHub workflow-event classification and the feedback-candidate handoff.
 
 ### Out of scope
 
@@ -46,6 +48,12 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 4. Open browser Developer Tools → Network; preserve the log.
 5. Do not enter real VINs, credentials, customer information, or provider data.
 6. Capture a screenshot for every failed or blocked test.
+7. Set local-only delivery-control secrets before starting the application:
+
+   ```bash
+   export GITHUB_WEBHOOK_SECRET=local-webhook-secret
+   export DELIVERY_AGENT_EVENT_KEY=local-agent-key
+   ```
 
 ## Test cases
 
@@ -65,6 +73,16 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 | MQ-12 | Static-demo clarity | Open the repository’s static `index.html` using a static file server or GitHub Pages path. | It is visibly labeled **Static Demo · Public mock data** and is distinguishable from the operational application. | | |
 | MQ-13 | Blueprint feedback | In the business blueprint, add a comment with a stage/step `+` control; export feedback. | The export is valid JSON with target ID, action type, author, comment, timestamp, and review status. | | |
 | MQ-14 | Cross-browser smoke | Repeat MQ-01, MQ-04, MQ-06, and MQ-13 in a second current browser. | No blocking layout, navigation, lookup, or export defect occurs. | | |
+| MQ-15 | Delivery-control entry point | Open `/control.html`. | The live operating console loads, shows the delivery pipeline and event stream, and exposes no webhook or agent secret in page source, browser storage, or network responses. | | |
+| MQ-16 | Authenticated specialist event | POST a unique yellow `gate.awaiting_infrastructure` event to `/api/delivery/events` with `x-delivery-agent-key: local-agent-key`. | The request succeeds and one matching yellow item appears in the attention queue without a page refresh. | | |
+| MQ-17 | Reject unauthenticated specialist event | Repeat MQ-16 without the agent key and then with an incorrect key. | Both requests are rejected; neither event appears in the dashboard or event snapshot. | | |
+| MQ-18 | Live multi-client update | Open `/control.html` in two tabs, then submit one unique authenticated event. | Both tabs display the event without refresh and show the same signal, headline, subject, and evidence link. | | |
+| MQ-19 | SSE reconnect and snapshot | After MQ-18, take one tab offline briefly, reconnect it, then refresh it. | The tab reconnects without crashing and restores the current event snapshot without creating duplicates. | | |
+| MQ-20 | Duplicate-event idempotency | Submit the exact MQ-16 payload twice with the same event ID. | The dashboard and snapshot contain one logical event, not two attention items. | | |
+| MQ-21 | GitHub success classification | Deliver a correctly signed `workflow_run` webhook fixture whose conclusion is `success`. | The dashboard records the workflow as green and links to the supplied GitHub run evidence. | | |
+| MQ-22 | GitHub failure/cancellation classification | Deliver correctly signed `workflow_run` fixtures whose conclusions are `failure` and `cancelled`. | Each event is red, identifies its PR or branch and workflow, and appears in the owner-attention queue. | | |
+| MQ-23 | GitHub webhook authentication | Deliver a webhook fixture with a missing or invalid signature. | The request is rejected and causes no dashboard state change. | | |
+| MQ-24 | Feedback-candidate readiness | Review the candidate PR evidence fields and candidate workflow for a `feedback-candidate/RR-026-live-delivery-dashboard` branch. | The candidate is tied to RR-026, an exact verified commit, acceptance criteria, test evidence, and an isolated candidate URL; absent hosting is shown as yellow rather than falsely green. | | |
 
 ## Severity and disposition
 
@@ -77,8 +95,9 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 
 ## Exit criteria
 
-- MQ-01 through MQ-10 pass with no Critical or High defect.
-- MQ-11 through MQ-14 are recorded as Pass, Fail, or an approved exception.
+- MQ-01 through MQ-10 and MQ-15 through MQ-23 pass with no Critical or High defect.
+- MQ-11 through MQ-14 and MQ-24 are recorded as Pass, Fail, Blocked, or an approved exception.
+- MQ-24 cannot pass until an isolated public candidate deployment exists; local verification records it as Blocked/Yellow, not Failed/Red.
 - The tester records the exact commit, runtime URL, browser, date, evidence, and overall result.
 - Any failure includes reproduction steps and a severity.
 - The Lead Engineer summarizes the outcome in the `manualQA → staging` promotion PR before it is opened.
