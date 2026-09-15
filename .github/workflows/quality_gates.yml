@@ -1,0 +1,42 @@
+name: Policy gates
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - dev
+      - automatedQA
+      - manualQA
+      - staging
+      - main
+      - prod
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  promotion-order:
+    name: Enforce promotion order
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate source and target branches
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          case "$BASE" in
+            dev)
+              if [[ ! "$HEAD" =~ ^([a-z0-9]+_){3,}[a-z0-9]+$ ]]; then
+                echo "Feature branches must use snake_case with feature, specialist, and change tokens."
+                exit 1
+              fi
+              ;;
+            automatedQA) [[ "$HEAD" == "dev" ]] ;;
+            manualQA) [[ "$HEAD" == "automatedQA" ]] ;;
+            staging) [[ "$HEAD" == "manualQA" ]] ;;
+            main) [[ "$HEAD" == "staging" ]] ;;
+            prod) [[ "$HEAD" == "main" ]] ;;
+            *) echo "Unsupported protected-branch target: $BASE"; exit 1 ;;
+          esac
