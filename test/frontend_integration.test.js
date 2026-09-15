@@ -176,10 +176,24 @@ test('Express serves operational client and callback but does not expose public 
   const root = await request(app).get('/').expect(200);
   assert.match(root.text, /data-runtime-mode="operational"/);
   assert.match(root.text, /data-oauth-client-id="rr-browser-client"/);
+  assert.match(root.text, /<base href="\/">/);
   assert.doesNotMatch(root.text, /data-runtime-mode="static-demo"/);
-  await request(app).get('/oauth/callback?code=test&state=test').expect(200, /data-runtime-mode="operational"/);
-  await request(app).get('/oauth-client.js').expect(200, /BrowserOAuthClient/);
-  await request(app).get('/api-client.js').expect(200, /LookupApiClient/);
+  const callback = await request(app).get('/oauth/callback?code=test&state=test').expect(200);
+  assert.match(callback.text, /data-runtime-mode="operational"/);
+  assert.match(callback.text, /<base href="\/">/);
+
+  const callbackUrl = new URL('http://localhost:3000/oauth/callback?code=test&state=test');
+  const operationalBase = new URL('/', callbackUrl);
+  assert.equal(new URL('client.css', operationalBase).href, 'http://localhost:3000/client.css');
+  assert.equal(new URL('oauth-client.js', operationalBase).href, 'http://localhost:3000/oauth-client.js');
+
+  const oauthClient = await request(app).get('/oauth-client.js').expect(200, /BrowserOAuthClient/);
+  assert.match(oauthClient.headers['content-type'], /javascript/);
+  const apiClient = await request(app).get('/api-client.js').expect(200, /LookupApiClient/);
+  assert.match(apiClient.headers['content-type'], /javascript/);
+  const stylesheet = await request(app).get('/client.css').expect(200);
+  assert.match(stylesheet.headers['content-type'], /text\/css/);
+  await request(app).get('/oauth/client.js').expect(404);
   await request(app).get('/mock-server/lookup-data.json').expect(404);
 });
 
@@ -188,6 +202,9 @@ test('repository index remains an explicitly labeled static-demo entry point', (
   const clientSource = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'client.js'), 'utf8');
   const apiSource = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'api-client.js'), 'utf8');
   assert.match(document, /data-runtime-mode="static-demo"/);
+  assert.match(document, /<base href="\.\/">/);
+  const githubPagesBase = new URL('./', 'https://jonly03.github.io/randr/index.html');
+  assert.equal(new URL('client.js', githubPagesBase).href, 'https://jonly03.github.io/randr/client.js');
   assert.match(clientSource, /Static Demo · Public mock data/);
   assert.match(apiSource, /\/api\/v1\/lookups\/vin/);
 });
