@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T02:30:00Z",
+  "updatedAt": "2026-09-15T03:00:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -27,26 +27,27 @@
       "id": "RR-007",
       "title": "Frontend/API integration",
       "type": "Feature",
-      "status": "in-progress",
-      "priority": "Current",
+      "status": "done",
+      "priority": "Complete",
       "outcome": "Route the client workflow through OAuth PKCE and the protected Express mock API.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Front-end Engineer", "Security Engineer"],
       "blockedBy": [],
-      "featureFile": "features/frontend_api_integration.md"
+      "featureFile": "features/frontend_api_integration.md",
+      "evidence": "24 tests passed; security review accepted; live OAuth-to-protected-API smoke test passed"
     },
     {
       "id": "RR-008",
       "title": "Containerize application",
       "type": "Enabler",
-      "status": "discovery",
-      "priority": "Planned",
+      "status": "ready",
+      "priority": "Next",
       "outcome": "Create a reproducible, Playwright-ready container image for the modular monolith.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": ["RR-007 Frontend/API integration"]
+      "blockedBy": []
     },
     {
       "id": "RR-009",
