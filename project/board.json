@@ -26,11 +26,11 @@
     },
     {
       "id": "RR-014",
-      "title": "Create long-lived branches",
+      "title": "Create protected long-lived branches",
       "type": "Governance",
       "status": "discovery",
       "priority": "Planned",
-      "outcome": "Create dev, automatedQA, manualQA, staging, and prod as controlled promotion branches.",
+      "outcome": "Atomically create dev, automatedQA, manualQA, staging, and prod and apply every available protection to all shared branches, including main.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Cloud Engineer"],
@@ -38,27 +38,27 @@
     },
     {
       "id": "RR-015",
-      "title": "Protect shared branches",
+      "title": "Repository quality gates",
       "type": "Governance",
       "status": "discovery",
       "priority": "Planned",
-      "outcome": "Enforce pull-request and available review controls on every shared branch.",
+      "outcome": "Enforce review freshness, required tests, scope checks, and promotion ordering through repository automation.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Security Engineer", "Cloud Engineer"],
-      "blockedBy": ["RR-014 Create long-lived branches"]
+      "blockedBy": ["RR-014 Create protected long-lived branches"]
     },
     {
       "id": "RR-016",
-      "title": "Quality and deployment gates",
+      "title": "Deployment gates",
       "type": "Governance",
       "status": "discovery",
       "priority": "Planned",
-      "outcome": "Connect automated checks and controlled deployments to the approved promotion path.",
+      "outcome": "Connect controlled environment deployments, release manifests, verification evidence, and rollback controls to the approved promotion path.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer", "Network Engineer"],
-      "blockedBy": ["RR-015 Protect shared branches"]
+      "blockedBy": ["RR-015 Repository quality gates"]
     },
     {
       "id": "RR-007.1",
