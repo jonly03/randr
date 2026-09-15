@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T04:00:00Z",
+  "updatedAt": "2026-09-15T05:00:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -10,6 +10,56 @@
     { "id": "done", "name": "Done", "description": "Accepted with evidence." }
   ],
   "items": [
+    {
+      "id": "RR-013",
+      "title": "Development governance",
+      "type": "Governance",
+      "status": "review",
+      "priority": "Approval required",
+      "outcome": "Establish feature branching, independent reviews, PR-only changes, and controlled environment promotion.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Solution Designer", "Security Engineer"],
+      "blockedBy": [],
+      "featureFile": "development_governance.md",
+      "evidence": "Governance artifacts proposed on development_governance_lead_system_architect; two independent specialist reports and project-owner approval required"
+    },
+    {
+      "id": "RR-014",
+      "title": "Create long-lived branches",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Create dev, automatedQA, manualQA, staging, and prod as controlled promotion branches.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Cloud Engineer"],
+      "blockedBy": ["RR-013 Development governance"]
+    },
+    {
+      "id": "RR-015",
+      "title": "Protect shared branches",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Enforce pull-request and available review controls on every shared branch.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Security Engineer", "Cloud Engineer"],
+      "blockedBy": ["RR-014 Create long-lived branches"]
+    },
+    {
+      "id": "RR-016",
+      "title": "Quality and deployment gates",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Connect automated checks and controlled deployments to the approved promotion path.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer", "Network Engineer"],
+      "blockedBy": ["RR-015 Protect shared branches"]
+    },
     {
       "id": "RR-007.1",
       "title": "OAuth callback asset resolution",
@@ -55,13 +105,13 @@
       "id": "RR-008",
       "title": "Containerize application",
       "type": "Enabler",
-      "status": "ready",
-      "priority": "Next",
+      "status": "discovery",
+      "priority": "Blocked",
       "outcome": "Create a reproducible, Playwright-ready container image for the modular monolith.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": []
+      "blockedBy": ["RR-016 Quality and deployment gates"]
     },
     {
       "id": "RR-009",
