@@ -11,10 +11,12 @@ This document makes environment promotion auditable before R&R connects a hostin
 | `dev` | `dev` | No reviewer gate | No external deployment configured |
 | `automatedQA` | `automatedQA` | No reviewer gate | No external deployment configured |
 | `manualQA` | `manualQA` | No reviewer gate | No external deployment configured |
-| `staging` | `staging` | Pending configuration: project-owner approval | No external deployment configured |
-| `prod` | `prod` | Pending configuration: project-owner approval | No external deployment configured |
+| `staging` | `staging` | Required reviewer: `jonly03` | No external deployment configured |
+| `prod` | `prod` | Required reviewer: `jonly03` | No external deployment configured |
 
 The environments exist now so future deployment workflows use stable, reviewable names. RR-010 will connect Render only after its own PR, security review, and explicit production authority decision. No environment secret, variable, credential, or deployment endpoint is configured by RR-016.
+
+GitHub currently allows repository administrators to bypass an environment approval gate. This remains an explicit residual risk until an emergency-access policy and independent human approvers are established; it is not a substitute for the required reviewer.
 
 ## Promotion evidence
 
@@ -36,8 +38,8 @@ A promotion from `main` to `prod` must reference a snake_case Markdown manifest 
 
 ## Current residual risks
 
-- GitHub environment reviewer gates for `staging` and `prod` remain to be enabled with the project owner as reviewer.
 - Shared-branch rulesets currently provide PR and linear-history controls, but required status checks cannot be enforced until these workflows reach those branches through the normal promotion path.
 - GitHub environment rules alone do not deploy anything; RR-010 must add the provider connection and deployment workflow.
+- Administrator bypass remains enabled for GitHub environment gates pending a documented emergency-access policy and a second human operational approver.
 
 These residuals remain visible in Issue #5 until they are resolved by the appropriate PR and verified in GitHub.
