@@ -195,12 +195,23 @@ function createApp(options = {}) {
 
   const publicRoot = path.join(__dirname, '..');
   const sendPublicFile = (fileName) => (_req, res) => res.sendFile(path.join(publicRoot, fileName));
-  app.get(['/', '/index.html'], sendPublicFile('index.html'));
-  for (const fileName of ['client.css', 'client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html']) {
+  const sendOperationalClient = (_req, res, next) => {
+    fs.readFile(path.join(publicRoot, 'index.html'), 'utf8', (error, document) => {
+      if (error) return next(error);
+      const clientId = config.oauth.clientId.replace(/[^A-Za-z0-9._~-]/g, '');
+      const operationalDocument = document
+        .replace('data-runtime-mode="static-demo"', 'data-runtime-mode="operational"')
+        .replace('data-oauth-client-id="rr-client"', `data-oauth-client-id="${clientId}"`);
+      res.set('Cache-Control', 'no-store');
+      return res.type('html').send(operationalDocument);
+    });
+  };
+  app.get(['/', '/index.html', '/oauth/callback'], sendOperationalClient);
+  for (const fileName of ['client.css', 'client.js', 'oauth-client.js', 'api-client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html']) {
     app.get(`/${fileName}`, sendPublicFile(fileName));
   }
-  // Temporary compatibility routes for the current static prototype and delivery board.
-  app.use('/mock-server', express.static(path.join(publicRoot, 'mock-server'), { index: false, dotfiles: 'deny' }));
+  // Project JSON remains available to the read-only delivery board. Operational
+  // client lookup data is available only through authenticated /api/v1 routes.
   app.use('/project', express.static(path.join(publicRoot, 'project'), { index: false, dotfiles: 'deny' }));
   app.use((error, _req, res, _next) => {
     if (error.message === 'Origin not allowed by CORS') return res.status(403).json({ error: 'cors_rejected' });
