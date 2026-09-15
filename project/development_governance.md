@@ -10,7 +10,7 @@ This document defines how changes are proposed, reviewed, promoted, and released
 2. Direct pushes to `dev`, `automatedQA`, `manualQA`, `staging`, `main`, and `prod` are prohibited.
 3. A feature branch is rebased onto the latest target branch before final review.
 4. Shared branch history is never rebased, force-pushed, or otherwise rewritten.
-5. Every feature PR requires two independent reviews from specialists in the affected engineering tribe.
+5. Every feature PR and every promotion PR requires two independent reviews from specialists in the affected engineering tribe.
 6. The change author cannot review their own change.
 7. The project owner provides the final approval after both specialist reports are complete.
 8. A failed review, test, or quality gate sends the change back to its originating branch.
@@ -43,7 +43,7 @@ If more than one specialist implements the change, the accountable implementer n
 5. Force-push only the rebased short-lived branch, using `--force-with-lease`.
 6. Never rebase or force-push a shared branch.
 
-The initial governance branch is an approved bootstrap exception: `development_governance_lead_system_architect` starts from `main` because `dev` does not yet exist.
+The initial governance PR is an approved one-time bootstrap exception: `development_governance_lead_system_architect` starts from and targets `main` because `dev` does not yet exist. After this policy is accepted, G2 initializes every long-lived branch from the same accepted `main` commit so the promotion chain begins without divergence. All later feature PRs target `dev`.
 
 ## Pull request requirements
 
@@ -67,7 +67,9 @@ Until two human GitHub collaborators are available, two independent specialist a
 
 Each report must:
 
+- Identify the reviewer instance or name
 - Identify the specialist role and review scope
+- Record the review timestamp and exact commit SHA reviewed
 - Inspect the complete proposed change independently
 - State findings with severity and file references
 - Record tests or checks performed
@@ -92,7 +94,8 @@ For a cross-tribe change, at least one report must come from each materially aff
 ## Merge and promotion policy
 
 - Feature PRs target `dev` and use GitHub's rebase merge after the branch is current and approved.
-- Promotion PRs follow the release flow and preserve an auditable PR boundary.
+- The one-time G1 governance PR targets `main` under the documented bootstrap exception.
+- Promotion PRs require two independent affected-tribe reports, project-owner approval, and the evidence defined in the release flow.
 - Shared branches are advanced only by an approved promotion PR.
 - A change is not complete when it reaches `dev`; it is complete only at the environment required by its acceptance criteria.
 - Emergency fixes follow the same PR and review controls, using an expedited review window rather than bypassing controls.
@@ -104,4 +107,3 @@ For a cross-tribe change, at least one report must come from each materially aff
 - Reviewers own independent challenge of correctness, risk, and maintainability.
 - The Lead System Architect owns sequencing, architecture coherence, board state, and promotion orchestration.
 - The project owner owns final approval at every explicit green-light gate.
-
