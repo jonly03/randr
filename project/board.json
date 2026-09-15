@@ -1,15 +1,107 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T04:00:00Z",
-  "wipLimit": 2,
+  "updatedAt": "2026-09-15T05:10:00Z",
+  "wipLimit": 1,
   "columns": [
-    { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
-    { "id": "ready", "name": "Ready", "description": "Accepted, sized, and ready for implementation." },
-    { "id": "in-progress", "name": "In Progress", "description": "Actively being built. WIP limit: 2." },
-    { "id": "review", "name": "Review / Demo", "description": "Technical review and client acceptance." },
-    { "id": "done", "name": "Done", "description": "Accepted with evidence." }
+    {
+      "id": "discovery",
+      "name": "Discovery",
+      "description": "Clarify the problem, rules, risks, and expected outcome."
+    },
+    {
+      "id": "ready",
+      "name": "Ready",
+      "description": "Accepted, sized, and ready for implementation."
+    },
+    {
+      "id": "in-progress",
+      "name": "In Progress",
+      "description": "Actively being built. WIP limit: 1."
+    },
+    {
+      "id": "review",
+      "name": "Review / Demo",
+      "description": "Technical review and client acceptance."
+    },
+    {
+      "id": "done",
+      "name": "Done",
+      "description": "Accepted with evidence."
+    }
   ],
   "items": [
+    {
+      "id": "RR-013",
+      "title": "Development governance",
+      "type": "Governance",
+      "status": "review",
+      "priority": "Approval required",
+      "outcome": "Establish feature branching, independent reviews, PR-only changes, and controlled environment promotion.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": [
+        "Lead System Architect",
+        "Solution Designer",
+        "Security Engineer"
+      ],
+      "blockedBy": [],
+      "featureFile": "development_governance.md",
+      "evidence": "Governance artifacts proposed on development_governance_lead_system_architect; two independent specialist reports, project-owner approval (mandatory governance trigger), and current-SHA evidence required"
+    },
+    {
+      "id": "RR-014",
+      "title": "Create protected long-lived branches",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Atomically create dev, automatedQA, manualQA, staging, and prod and apply every available protection to all shared branches, including main.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer"
+      ],
+      "blockedBy": [
+        "RR-013 Development governance"
+      ]
+    },
+    {
+      "id": "RR-015",
+      "title": "Repository quality gates",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Enforce review freshness, required tests, scope checks, and promotion ordering through repository automation.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": [
+        "Lead System Architect",
+        "Security Engineer",
+        "Cloud Engineer"
+      ],
+      "blockedBy": [
+        "RR-014 Create protected long-lived branches"
+      ]
+    },
+    {
+      "id": "RR-016",
+      "title": "Deployment gates",
+      "type": "Governance",
+      "status": "discovery",
+      "priority": "Planned",
+      "outcome": "Connect controlled environment deployments, release manifests, verification evidence, and rollback controls to the approved promotion path.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Security Engineer",
+        "Network Engineer"
+      ],
+      "blockedBy": [
+        "RR-015 Repository quality gates"
+      ]
+    },
     {
       "id": "RR-007.1",
       "title": "OAuth callback asset resolution",
@@ -19,7 +111,11 @@
       "outcome": "Load frontend assets correctly after OAuth callback in Express while preserving GitHub Pages project-path hosting.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Front-end Engineer", "Security Engineer"],
+      "specialists": [
+        "Lead System Architect",
+        "Front-end Engineer",
+        "Security Engineer"
+      ],
       "blockedBy": [],
       "featureFile": "features/oauth_callback_asset_resolution.md",
       "evidence": "Callback and static-host asset resolution regression tests passed with correct JavaScript and CSS content types"
@@ -33,8 +129,15 @@
       "outcome": "Return compatible glass parts from MyGrant using a real automated lookup.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Business Analyst", "Solution Designer", "Back-end Engineer", "Security Engineer"],
-      "blockedBy": ["RR-003A MyGrant feasibility spike"],
+      "specialists": [
+        "Business Analyst",
+        "Solution Designer",
+        "Back-end Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-003A MyGrant feasibility spike"
+      ],
       "featureFile": "features/executable_mygrant_lookup.md"
     },
     {
@@ -46,7 +149,11 @@
       "outcome": "Route the client workflow through OAuth PKCE and the protected Express mock API.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Front-end Engineer", "Security Engineer"],
+      "specialists": [
+        "Lead System Architect",
+        "Front-end Engineer",
+        "Security Engineer"
+      ],
       "blockedBy": [],
       "featureFile": "features/frontend_api_integration.md",
       "evidence": "24 tests passed; security review accepted; live OAuth-to-protected-API smoke test passed"
@@ -55,13 +162,19 @@
       "id": "RR-008",
       "title": "Containerize application",
       "type": "Enabler",
-      "status": "ready",
-      "priority": "Next",
+      "status": "discovery",
+      "priority": "Blocked",
       "outcome": "Create a reproducible, Playwright-ready container image for the modular monolith.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": []
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-016 Deployment gates"
+      ]
     },
     {
       "id": "RR-009",
@@ -72,8 +185,14 @@
       "outcome": "Prove the complete application behaves correctly inside its local container.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": ["RR-008 Containerize application"]
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-008 Containerize application"
+      ]
     },
     {
       "id": "RR-010",
@@ -84,8 +203,15 @@
       "outcome": "Define a secure, reviewable Render staging-service configuration without deploying it.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Cloud Engineer", "Network Engineer", "Security Engineer"],
-      "blockedBy": ["RR-009 Verify container locally"]
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Network Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-009 Verify container locally"
+      ]
     },
     {
       "id": "RR-011",
@@ -96,8 +222,14 @@
       "outcome": "Run the modular monolith at one HTTPS Render staging origin.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": ["RR-010 Prepare Render configuration"]
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-010 Prepare Render configuration"
+      ]
     },
     {
       "id": "RR-012",
@@ -108,8 +240,14 @@
       "outcome": "Validate deployed frontend, OAuth, API, Swagger, health, logs, and recovery behavior.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": ["RR-011 Deploy Render staging"]
+      "specialists": [
+        "Lead System Architect",
+        "Cloud Engineer",
+        "Security Engineer"
+      ],
+      "blockedBy": [
+        "RR-011 Deploy Render staging"
+      ]
     },
     {
       "id": "RR-003A",
@@ -120,8 +258,17 @@
       "outcome": "Prove MyGrant authentication, both lookup paths, result extraction, and hosted-browser feasibility.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Business Analyst", "Back-end Engineer", "Security Engineer", "Network Engineer", "Cloud Engineer"],
-      "blockedBy": ["RR-012 Verify Render staging"]
+      "specialists": [
+        "Lead System Architect",
+        "Business Analyst",
+        "Back-end Engineer",
+        "Security Engineer",
+        "Network Engineer",
+        "Cloud Engineer"
+      ],
+      "blockedBy": [
+        "RR-012 Verify Render staging"
+      ]
     },
     {
       "id": "RR-005",
@@ -132,7 +279,11 @@
       "outcome": "Serve mock lookup capabilities through a protected Express API using OAuth 2.0 Authorization Code with PKCE.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "Back-end Engineer", "Security Engineer"],
+      "specialists": [
+        "Lead System Architect",
+        "Back-end Engineer",
+        "Security Engineer"
+      ],
       "blockedBy": [],
       "evidence": "10 automated tests passed; security review accepted for demo-only use"
     },
@@ -145,7 +296,11 @@
       "outcome": "Publish a testable OpenAPI contract and Swagger interface for the authenticated Express endpoints.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Lead System Architect", "API Platform Engineer", "Security Engineer"],
+      "specialists": [
+        "Lead System Architect",
+        "API Platform Engineer",
+        "Security Engineer"
+      ],
       "blockedBy": [],
       "featureFile": "features/self_documented_api.md",
       "evidence": "OpenAPI 3.1 validated; Swagger PKCE flow configured; 15 automated tests passed"
@@ -159,7 +314,9 @@
       "outcome": "Create a shared source of truth for feature progress, ownership, risks, and decisions.",
       "productOwner": "Lead System Architect",
       "engineeringOwner": "Lead System Architect",
-      "specialists": ["UI Developer"],
+      "specialists": [
+        "UI Developer"
+      ],
       "blockedBy": []
     },
     {
@@ -171,7 +328,11 @@
       "outcome": "Validate the service-intake workflow with the client before backend investment.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
-      "specialists": ["Solution Designer", "UX Designer", "UI Developer"],
+      "specialists": [
+        "Solution Designer",
+        "UX Designer",
+        "UI Developer"
+      ],
       "blockedBy": [],
       "evidence": "Client demo approved on September 14, 2026"
     },
@@ -184,7 +345,10 @@
       "outcome": "Create a shared view of the auto-glass job lifecycle and open discovery questions.",
       "productOwner": "Business Analyst",
       "engineeringOwner": "Lead System Architect",
-      "specialists": ["Solution Designer", "UX Designer"],
+      "specialists": [
+        "Solution Designer",
+        "UX Designer"
+      ],
       "blockedBy": []
     }
   ]
