@@ -2,6 +2,10 @@
 
 A living visual model of the R&R Finest Auto Glass business process.
 
+## Client demo hub
+
+Open `whats-new.html` for the client-facing ecosystem update. It connects the business blueprint, public service preview, locally hosted operational application, interactive API documentation, delivery control, and GitHub work tracker in one guided demo. Reviewers can record objective-level validation and export it as structured JSON; responses remain in their browser until exported.
+
 ## Purpose
 
 This blueprint captures the current understanding of how R&R:

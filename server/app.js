@@ -249,7 +249,7 @@ function createApp(options = {}) {
     });
   };
   app.get(['/', '/index.html', '/oauth/callback'], sendOperationalClient);
-  for (const fileName of ['client.css', 'client.js', 'oauth-client.js', 'api-client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html', 'control.html', 'control.css', 'control.js']) {
+  for (const fileName of ['client.css', 'client.js', 'oauth-client.js', 'api-client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html', 'control.html', 'control.css', 'control.js', 'whats-new.html', 'whats-new.css', 'whats-new.js']) {
     app.get(`/${fileName}`, sendPublicFile(fileName));
   }
   // Project JSON remains available to the read-only delivery board. Operational

@@ -24,7 +24,7 @@ root.innerHTML = `
   <div class="app-shell">
     <header class="topbar py-3"><div class="container workflow d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-3"><div class="brand-mark">R&amp;R</div><div><div class="brand-name">Finest Auto Glass</div><div class="brand-sub">Service Intake</div></div></div>
-      <div class="d-flex align-items-center gap-3"><span id="environment-badge" class="badge rounded-pill demo-pill px-3 py-2"></span><a class="small text-decoration-none d-none d-md-inline" href="blueprint.html">Blueprint</a><a class="small text-decoration-none" href="board.html">Delivery Board</a></div>
+      <div class="d-flex align-items-center gap-3"><span id="environment-badge" class="badge rounded-pill demo-pill px-3 py-2"></span><a class="small text-decoration-none d-none d-lg-inline" href="whats-new.html">What’s New</a><a class="small text-decoration-none d-none d-md-inline" href="blueprint.html">Blueprint</a><a class="small text-decoration-none" href="board.html">Delivery Board</a></div>
     </div></header>
     <main class="container workflow py-4 py-md-5"><div class="mb-4">
       <div class="d-flex justify-content-between align-items-end mb-3"><div><div class="eyebrow mb-1">NEW SERVICE REQUEST</div><h1 class="h3 mb-0">Identify the correct glass</h1></div><span class="text-secondary small d-none d-md-inline">Request #RR-1048</span></div>
