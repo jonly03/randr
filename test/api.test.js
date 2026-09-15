@@ -152,6 +152,9 @@ test('server delivers the client UI without exposing backend source', async () =
   const response = await request(app).get('/').expect(200, /id="root"/);
   assert.match(response.headers['content-security-policy'], /default-src 'self'/);
   await request(app).get('/client.js').expect(200, /renderGlass/);
+  await request(app).get('/whats-new.html').expect(200, /Client Demo Hub/);
+  await request(app).get('/whats-new.css').expect(200, /--blue:/);
+  await request(app).get('/whats-new.js').expect(200, /rr_client_ecosystem_validation_v1/);
   await request(app).get('/server/app.js').expect(404);
 });
 
