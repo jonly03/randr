@@ -10,9 +10,9 @@ This document defines how changes are proposed, reviewed, promoted, and released
 2. Direct pushes to `dev`, `automatedQA`, `manualQA`, `staging`, `main`, and `prod` are prohibited.
 3. A feature branch is rebased onto the latest target branch before final review.
 4. Shared branch history is never rebased, force-pushed, or otherwise rewritten.
-5. Every feature PR and every promotion PR requires two independent reviews from specialists in the affected engineering tribe.
+5. Every feature PR and every promotion PR requires at least two independent reviews from specialists in the affected engineering tribe.
 6. The change author cannot review their own change.
-7. The project owner provides the final approval after both specialist reports are complete.
+7. The project owner, acting as a principal distinct from the implementing and reviewing agent instances, provides final approval after all required specialist reports are complete.
 8. A failed review, test, or quality gate sends the change back to its originating branch.
 9. Every promotion between shared branches uses a separate PR.
 10. Production changes must be traceable from `prod` through every promotion PR to the originating feature PR.
@@ -43,7 +43,7 @@ If more than one specialist implements the change, the accountable implementer n
 5. Force-push only the rebased short-lived branch, using `--force-with-lease`.
 6. Never rebase or force-push a shared branch.
 
-The initial governance PR is an approved one-time bootstrap exception: `development_governance_lead_system_architect` starts from and targets `main` because `dev` does not yet exist. After this policy is accepted, G2 initializes every long-lived branch from the same accepted `main` commit so the promotion chain begins without divergence. All later feature PRs target `dev`.
+The initial governance PR is an approved one-time bootstrap exception: `development_governance_lead_system_architect` starts from and targets `main` because `dev` does not yet exist. Until G2 completes, no application or infrastructure change may follow G1 into `main`. G2 must initialize every long-lived branch from the same accepted `main` commit and atomically apply every branch protection available to the repository plan and permissions. The exception expires when G2 completes; any unavailable protection is recorded as a blocking residual risk with an owner and deadline. All later feature PRs target `dev`.
 
 ## Pull request requirements
 
@@ -55,7 +55,7 @@ Every PR must contain:
 - Test evidence
 - Rollback approach
 - Two independent specialist review reports
-- Project-owner approval status
+- Project-owner identity, approval timestamp, and reviewed source and target SHAs
 - Source and target branches
 - Related board item and documentation
 
@@ -63,7 +63,7 @@ A PR remains a draft or unmerged while any required evidence is missing.
 
 ## Temporary specialist-agent review policy
 
-Until two human GitHub collaborators are available, two independent specialist agents from the affected tribe may produce review reports.
+Until two human GitHub collaborators are available, at least two independent specialist agents from the affected tribe may produce review reports. Each reviewer uses a distinct agent instance without inherited reviewer context and cannot be the implementing agent. Reports are posted individually to the PR record so their task identities, timestamps, reviewed SHAs, findings, and decisions remain auditable in Git history and the PR conversation.
 
 Each report must:
 
@@ -77,7 +77,15 @@ Each report must:
 
 The reports are evidence, not native GitHub approvals. They must be added to the PR record before the project owner approves. A `changes_requested` result blocks promotion until remediation is independently re-reviewed.
 
-When human reviewers become available, protected branches will require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but will not replace the human approvals.
+The project owner explicitly accepts the residual identity risk for each PR when approving the exact reviewed source and target SHAs. This temporary exception expires when two eligible human GitHub reviewers are onboarded or before the first production deployment, whichever occurs first. When human reviewers become available, protected branches require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but do not replace the human approvals.
+
+## Approval freshness
+
+- Every specialist report, project-owner approval, and required check binds to the current source and target commit SHAs.
+- Any source update, rebase, or force-push invalidates all earlier reports, approvals, and checks.
+- A material target-branch update invalidates approval and requires conflict analysis, refreshed checks, and affected reviews.
+- The project-owner approval record includes owner identity, timestamp, source SHA, and target SHA.
+- Branch protection must dismiss stale approvals and require approval after the latest push when those controls are available.
 
 ## Tribe review matrix
 
@@ -89,16 +97,17 @@ When human reviewers become available, protected branches will require two nativ
 | Containers, CI/CD, hosting, observability | Cloud Platform | Cloud Engineer, Network Engineer, Security Engineer |
 | Architecture and cross-cutting process | Architecture | Solution Designer, Engineering Manager, senior engineer from each affected tribe |
 
-For a cross-tribe change, at least one report must come from each materially affected tribe. The Lead System Architect orchestrates reviews but does not substitute for both affected-tribe reviewers.
+Two reports are the minimum, not the maximum. For a cross-tribe change, at least one report must come from each materially affected tribe. The Lead System Architect orchestrates reviews but does not substitute for affected-tribe reviewers.
 
 ## Merge and promotion policy
 
 - Feature PRs target `dev` and use GitHub's rebase merge after the branch is current and approved.
 - The one-time G1 governance PR targets `main` under the documented bootstrap exception.
-- Promotion PRs require two independent affected-tribe reports, project-owner approval, and the evidence defined in the release flow.
+- Promotion PRs require at least two independent affected-tribe reports, project-owner approval, and the evidence defined in the release flow.
 - Shared branches are advanced only by an approved promotion PR.
 - A change is not complete when it reaches `dev`; it is complete only at the environment required by its acceptance criteria.
-- Emergency fixes follow the same PR and review controls, using an expedited review window rather than bypassing controls.
+- Emergency code fixes follow the same PR and review controls, using an expedited review window rather than bypassing controls.
+- Deployment configuration and secret-setting changes require the same review, approval, audit, and rollback evidence as source changes. Secret values never enter source control or review evidence.
 
 ## Ownership
 
