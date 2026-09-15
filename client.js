@@ -6,7 +6,7 @@ root.innerHTML = `
     <header class="topbar py-3">
       <div class="container workflow d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-3"><div class="brand-mark">R&amp;R</div><div><div class="brand-name">Finest Auto Glass</div><div class="brand-sub">Service Intake</div></div></div>
-        <div class="d-flex align-items-center gap-3"><span class="badge rounded-pill demo-pill px-3 py-2">● Demo environment</span><a class="small text-decoration-none d-none d-sm-inline" href="blueprint.html">View Blueprint</a></div>
+        <div class="d-flex align-items-center gap-3"><span class="badge rounded-pill demo-pill px-3 py-2">● Demo environment</span><a class="small text-decoration-none d-none d-md-inline" href="blueprint.html">Blueprint</a><a class="small text-decoration-none" href="board.html">Delivery Board</a></div>
       </div>
     </header>
     <main class="container workflow py-4 py-md-5">
