@@ -34,16 +34,22 @@
 
 ## Specialist review 1
 
+- Reviewer identity:
 - Reviewer role:
 - Tribe:
+- Reviewed commit SHA:
+- Reviewed at:
 - Decision: Pending
 - Findings:
 - Checks performed:
 
 ## Specialist review 2
 
+- Reviewer identity:
 - Reviewer role:
 - Tribe:
+- Reviewed commit SHA:
+- Reviewed at:
 - Decision: Pending
 - Findings:
 - Checks performed:
@@ -55,4 +61,3 @@
 - [ ] Required automated checks pass
 - [ ] Project owner approved
 - [ ] Promotion target and rollback path are confirmed
-
