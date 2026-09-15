@@ -77,7 +77,7 @@ Each report must:
 
 The reports are evidence, not native GitHub approvals. They must be added to the PR record before merge. A `changes_requested` result blocks promotion until remediation is independently re-reviewed.
 
-The project owner explicitly accepts the residual identity risk when approving an escalated PR's exact reviewed source and target SHAs. This temporary exception expires when two eligible human GitHub reviewers are onboarded or before the first production deployment, whichever occurs first. When human reviewers become available, protected branches require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but do not replace the human approvals.
+The temporary agent-review exception is limited to low-risk, non-security, non-production work until G2 and G3 deliver protected branches and durable evidence validation. Any PR relying on the exception outside that scope requires explicit project-owner approval bound to its current source and target SHAs. This temporary exception expires when two eligible human GitHub reviewers are onboarded or before the first production deployment, whichever occurs first. When human reviewers become available, protected branches require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but do not replace the human approvals.
 
 ## Owner-attention policy
 
@@ -87,9 +87,9 @@ The Lead System Architect owns the decision to request the project owner's eyes 
 - `owner review requested`: the owner is invited to inspect and comment, but lack of a response does not block merge when no approval trigger exists.
 - `owner approval required`: merge or promotion pauses because the change needs an explicit business, risk, or authority decision.
 
-Owner review is normally requested for material customer-facing UX changes and material security changes. This includes consent, accessibility, pricing or availability communication, major workflow changes, authentication or authorization behavior, handling of customer data, secrets, vulnerabilities, and security exceptions. The Lead System Architect summarizes the decision, risks, alternatives, and rollback path in the PR.
+Owner review is requested for material customer-facing UX changes and material security changes. This includes consent, accessibility, pricing or availability communication, major workflow changes, authentication or authorization behavior, handling of customer data, secrets, vulnerabilities, and security exceptions. The Lead System Architect summarizes the decision, risks, alternatives, and rollback path in the PR.
 
-Owner approval is required only when there is a genuine decision or authority boundary: requirements are ambiguous; residual risk lacks an agreed owner; a material security or UX trade-off needs product direction; a production deployment or rollback is requested; a destructive or irreversible data change is proposed; material spend, vendor commitment, credentials, or external-data access is needed; or the project owner has explicitly requested approval for that category. Routine documentation, tests, internal refactors, and low-risk implementation changes proceed autonomously after their review and verification gates.
+Owner approval is required only when there is a genuine decision or authority boundary. The following are mandatory, non-overridable triggers: any change to development governance, security policy, authentication, authorization, customer-data handling, secret management, or a production-impacting security or UX trade-off; requirements that are ambiguous; residual risk without an agreed owner; production deployment or rollback; destructive or irreversible data change; material spend, vendor commitment, credentials, or external-data access; and any category the project owner explicitly marks approval-required. Routine documentation, tests, internal refactors, and low-risk implementation changes proceed autonomously after their review and verification gates.
 
 ## Approval freshness
 
