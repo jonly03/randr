@@ -12,7 +12,7 @@ This document defines how changes are proposed, reviewed, promoted, and released
 4. Shared branch history is never rebased, force-pushed, or otherwise rewritten.
 5. Every feature PR and every promotion PR requires at least two independent reviews from specialists in the affected engineering tribe.
 6. The change author cannot review their own change.
-7. The project owner, acting as a principal distinct from the implementing and reviewing agent instances, provides final approval after all required specialist reports are complete.
+7. The Lead System Architect decides whether a PR needs project-owner review or approval by applying the owner-attention policy; routine, fully evidenced changes do not wait for approval.
 8. A failed review, test, or quality gate sends the change back to its originating branch.
 9. Every promotion between shared branches uses a separate PR.
 10. Production changes must be traceable from `prod` through every promotion PR to the originating feature PR.
@@ -55,11 +55,11 @@ Every PR must contain:
 - Test evidence
 - Rollback approach
 - Two independent specialist review reports
-- Project-owner identity, approval timestamp, and reviewed source and target SHAs
 - Source and target branches
+- An owner-attention decision, rationale, and—when requested—the reviewed source and target SHAs
 - Related board item and documentation
 
-A PR remains a draft or unmerged while any required evidence is missing.
+A PR remains a draft or unmerged while any required evidence is missing. Project-owner approval is required only when the owner-attention policy identifies an approval trigger.
 
 ## Temporary specialist-agent review policy
 
@@ -75,16 +75,28 @@ Each report must:
 - Record tests or checks performed
 - Return `approved`, `approved_with_comments`, or `changes_requested`
 
-The reports are evidence, not native GitHub approvals. They must be added to the PR record before the project owner approves. A `changes_requested` result blocks promotion until remediation is independently re-reviewed.
+The reports are evidence, not native GitHub approvals. They must be added to the PR record before merge. A `changes_requested` result blocks promotion until remediation is independently re-reviewed.
 
-The project owner explicitly accepts the residual identity risk for each PR when approving the exact reviewed source and target SHAs. This temporary exception expires when two eligible human GitHub reviewers are onboarded or before the first production deployment, whichever occurs first. When human reviewers become available, protected branches require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but do not replace the human approvals.
+The project owner explicitly accepts the residual identity risk when approving an escalated PR's exact reviewed source and target SHAs. This temporary exception expires when two eligible human GitHub reviewers are onboarded or before the first production deployment, whichever occurs first. When human reviewers become available, protected branches require two native GitHub approvals. Agent reviews may continue as additional engineering evidence but do not replace the human approvals.
+
+## Owner-attention policy
+
+The Lead System Architect owns the decision to request the project owner's eyes on a PR. The PR records one of these outcomes:
+
+- `autonomous merge`: two independent specialist reports and all required checks pass; no owner decision is needed.
+- `owner review requested`: the owner is invited to inspect and comment, but lack of a response does not block merge when no approval trigger exists.
+- `owner approval required`: merge or promotion pauses because the change needs an explicit business, risk, or authority decision.
+
+Owner review is normally requested for material customer-facing UX changes and material security changes. This includes consent, accessibility, pricing or availability communication, major workflow changes, authentication or authorization behavior, handling of customer data, secrets, vulnerabilities, and security exceptions. The Lead System Architect summarizes the decision, risks, alternatives, and rollback path in the PR.
+
+Owner approval is required only when there is a genuine decision or authority boundary: requirements are ambiguous; residual risk lacks an agreed owner; a material security or UX trade-off needs product direction; a production deployment or rollback is requested; a destructive or irreversible data change is proposed; material spend, vendor commitment, credentials, or external-data access is needed; or the project owner has explicitly requested approval for that category. Routine documentation, tests, internal refactors, and low-risk implementation changes proceed autonomously after their review and verification gates.
 
 ## Approval freshness
 
-- Every specialist report, project-owner approval, and required check binds to the current source and target commit SHAs.
+- Every specialist report, owner-attention decision, project-owner approval when required, and required check binds to the current source and target commit SHAs.
 - Any source update, rebase, or force-push invalidates all earlier reports, approvals, and checks.
 - Any target-branch head update invalidates approval and requires conflict analysis, refreshed checks, and affected reviews.
-- The project-owner approval record includes owner identity, timestamp, source SHA, and target SHA.
+- Any owner-attention record includes the decision, rationale, timestamp, source SHA, and target SHA; an approval record also includes owner identity.
 - Branch protection must dismiss stale approvals and require approval after the latest push when those controls are available.
 
 ## Tribe review matrix
@@ -103,7 +115,7 @@ Two reports are the minimum, not the maximum. For a cross-tribe change, at least
 
 - Feature PRs target `dev` and use GitHub's rebase merge after the branch is current and approved.
 - The one-time G1 governance PR targets `main` under the documented bootstrap exception.
-- Promotion PRs require at least two independent affected-tribe reports, project-owner approval, and the evidence defined in the release flow.
+- Promotion PRs require at least two independent affected-tribe reports, an owner-attention decision, and the evidence defined in the release flow; explicit project-owner approval is required only when the owner-attention policy triggers it.
 - Shared branches are advanced only by an approved promotion PR.
 - A change is not complete when it reaches `dev`; it is complete only at the environment required by its acceptance criteria.
 - Emergency code fixes follow the same PR and review controls, using an expedited review window rather than bypassing controls.
@@ -115,4 +127,4 @@ Two reports are the minimum, not the maximum. For a cross-tribe change, at least
 - The implementing specialist owns technical execution and evidence.
 - Reviewers own independent challenge of correctness, risk, and maintainability.
 - The Lead System Architect owns sequencing, architecture coherence, board state, and promotion orchestration.
-- The project owner owns final approval at every explicit green-light gate.
+- The project owner provides direction and approval for escalated decisions, and retains final authority for deployments, external commitments, and other approval-triggering actions.
