@@ -1,11 +1,11 @@
 {
   "project": "R&R Finest Auto Glass",
   "updatedAt": "2026-09-15T05:00:00Z",
-  "wipLimit": 2,
+  "wipLimit": 1,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
     { "id": "ready", "name": "Ready", "description": "Accepted, sized, and ready for implementation." },
-    { "id": "in-progress", "name": "In Progress", "description": "Actively being built. WIP limit: 2." },
+    { "id": "in-progress", "name": "In Progress", "description": "Actively being built. WIP limit: 1." },
     { "id": "review", "name": "Review / Demo", "description": "Technical review and client acceptance." },
     { "id": "done", "name": "Done", "description": "Accepted with evidence." }
   ],
