@@ -4,7 +4,7 @@
 
 | Field | Tester entry |
 |---|---|
-| Plan version | 1.0 |
+| Plan version | 1.1 |
 | Branch / commit | |
 | Test date and time | |
 | Tester | |
@@ -22,7 +22,7 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 - glass-type path rules;
 - error/recovery behavior;
 - static-demo labeling and client-feedback export;
-- API documentation access appropriate to the environment.
+- API documentation access appropriate to the environment.\n- live delivery-control rendering, authenticated agent-event ingestion, and SSE updates;\n- GitHub workflow-event classification and the feedback-candidate handoff.
 
 ### Out of scope
 
@@ -45,7 +45,7 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 3. Open `http://localhost:3000`.
 4. Open browser Developer Tools → Network; preserve the log.
 5. Do not enter real VINs, credentials, customer information, or provider data.
-6. Capture a screenshot for every failed or blocked test.
+6. Capture a screenshot for every failed or blocked test.\n7. Set local-only delivery-control secrets before starting the application:\n\n   ```bash\n   export GITHUB_WEBHOOK_SECRET=local-webhook-secret\n   export DELIVERY_AGENT_EVENT_KEY=local-agent-key\n   ```
 
 ## Test cases
 
@@ -64,7 +64,7 @@ This plan verifies the current R&R Finest Auto Glass MLP before a staging promot
 | MQ-11 | Swagger API documentation | Open `/api/docs`; use **Authorize** and one read-only API request. | Swagger loads in this non-production local runtime, authorization completes, and the documented endpoint responds consistently with the client. | | |
 | MQ-12 | Static-demo clarity | Open the repository’s static `index.html` using a static file server or GitHub Pages path. | It is visibly labeled **Static Demo · Public mock data** and is distinguishable from the operational application. | | |
 | MQ-13 | Blueprint feedback | In the business blueprint, add a comment with a stage/step `+` control; export feedback. | The export is valid JSON with target ID, action type, author, comment, timestamp, and review status. | | |
-| MQ-14 | Cross-browser smoke | Repeat MQ-01, MQ-04, MQ-06, and MQ-13 in a second current browser. | No blocking layout, navigation, lookup, or export defect occurs. | | |
+| MQ-14 | Cross-browser smoke | Repeat MQ-01, MQ-04, MQ-06, and MQ-13 in a second current browser. | No blocking layout, navigation, lookup, or export defect occurs. | | |\n| MQ-15 | Delivery-control entry point | Open `/control.html`. | The live operating console loads, shows the delivery pipeline and event stream, and exposes no webhook or agent secret in page source, browser storage, or network responses. | | |\n| MQ-16 | Authenticated specialist event | POST a unique yellow `gate.awaiting_infrastructure` event to `/api/delivery/events` with `x-delivery-agent-key: local-agent-key`. | The request succeeds and one matching yellow item appears in the attention queue without a page refresh. | | |\n| MQ-17 | Reject unauthenticated specialist event | Repeat MQ-16 without the agent key and then with an incorrect key. | Both requests are rejected; neither event appears in the dashboard or event snapshot. | | |\n| MQ-18 | Live multi-client update | Open `/control.html` in two tabs, then submit one unique authenticated event. | Both tabs display the event without refresh and show the same signal, headline, subject, and evidence link. | | |\n| MQ-19 | SSE reconnect and snapshot | After MQ-18, take one tab offline briefly, reconnect it, then refresh it. | The tab reconnects without crashing and restores the current event snapshot without creating duplicates. | | |\n| MQ-20 | Duplicate-event idempotency | Submit the exact MQ-16 payload twice with the same event ID. | The dashboard and snapshot contain one logical event, not two attention items. | | |\n| MQ-21 | GitHub success classification | Deliver a correctly signed `workflow_run` webhook fixture whose conclusion is `success`. | The dashboard records the workflow as green and links to the supplied GitHub run evidence. | | |\n| MQ-22 | GitHub failure/cancellation classification | Deliver correctly signed `workflow_run` fixtures whose conclusions are `failure` and `cancelled`. | Each event is red, identifies its PR or branch and workflow, and appears in the owner-attention queue. | | |\n| MQ-23 | GitHub webhook authentication | Deliver a webhook fixture with a missing or invalid signature. | The request is rejected and causes no dashboard state change. | | |\n| MQ-24 | Feedback-candidate readiness | Review the candidate PR evidence fields and candidate workflow for a `feedback-candidate/RR-026-live-delivery-dashboard` branch. | The candidate is tied to RR-026, an exact verified commit, acceptance criteria, test evidence, and an isolated candidate URL; absent hosting is shown as yellow rather than falsely green. | | |
 
 ## Severity and disposition
 
