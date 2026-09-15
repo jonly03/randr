@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T00:00:00Z",
+  "updatedAt": "2026-09-15T00:30:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -27,13 +27,14 @@
       "id": "RR-005",
       "title": "Authenticated API foundation",
       "type": "Enabler",
-      "status": "in-progress",
-      "priority": "Current",
+      "status": "done",
+      "priority": "Complete",
       "outcome": "Serve mock lookup capabilities through a protected Express API using OAuth 2.0 Authorization Code with PKCE.",
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Back-end Engineer", "Security Engineer"],
-      "blockedBy": []
+      "blockedBy": [],
+      "evidence": "10 automated tests passed; security review accepted for demo-only use"
     },
     {
       "id": "RR-004",
