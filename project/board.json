@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T00:30:00Z",
+  "updatedAt": "2026-09-15T01:00:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -35,6 +35,18 @@
       "specialists": ["Lead System Architect", "Back-end Engineer", "Security Engineer"],
       "blockedBy": [],
       "evidence": "10 automated tests passed; security review accepted for demo-only use"
+    },
+    {
+      "id": "RR-006",
+      "title": "Self-documented API",
+      "type": "Enabler",
+      "status": "in-progress",
+      "priority": "Current",
+      "outcome": "Publish a testable OpenAPI contract and Swagger interface for the authenticated Express endpoints.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "API Platform Engineer", "Security Engineer"],
+      "blockedBy": []
     },
     {
       "id": "RR-004",
