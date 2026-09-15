@@ -21,9 +21,9 @@ Specialist work is also sequenced. Implementation, security review, testing, and
 | Step | Board item | Outcome | Depends on | Execution state |
 |---|---|---|---|---|
 | G1 | RR-013 Development Governance | Establish branch, PR, review, and promotion policy | None | Review / owner approval |
-| G2 | RR-014 Long-lived Branches | Create `dev`, `automatedQA`, `manualQA`, `staging`, and `prod` | RR-013 | Planned |
-| G3 | RR-015 Branch Protection | Enforce PR and available review controls on shared branches | RR-014 | Planned |
-| G4 | RR-016 Quality and Deployment Gates | Connect checks and deployments to the promotion flow | RR-015 | Planned |
+| G2 | RR-014 Protected Long-lived Branches | Atomically create and protect `dev`, `automatedQA`, `manualQA`, `staging`, and `prod`, and protect `main` | RR-013 | Planned |
+| G3 | RR-015 Repository Quality Gates | Enforce review freshness, tests, scope, and promotion-order checks | RR-014 | Planned |
+| G4 | RR-016 Deployment Gates | Connect environment deployments, release manifests, verification, and rollback evidence | RR-015 | Planned |
 | 1 | Architecture record | Establish the approved deployment and delivery direction | None | Complete |
 | 2 | RR-007 Frontend/API Integration | Browser uses OAuth PKCE and protected mock API endpoints | Step 1 | Complete |
 | 2.1 | RR-007.1 OAuth Callback Asset Resolution | Ensure callback assets load in Express without breaking the GitHub Pages project path | RR-007 | Complete |
