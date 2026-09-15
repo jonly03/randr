@@ -18,25 +18,25 @@ Each arrow is a pull request. A source branch cannot skip a target branch.
 
 | Branch | Purpose | Entry gate | Exit evidence |
 |---|---|---|---|
-| Feature branch | Isolate one cohesive change | Approved plan and current `dev` | Tests, two specialist reports, owner approval |
+| Feature branch | Isolate one cohesive change | Approved plan and current `dev` | Tests, two specialist reports, and an owner-attention decision |
 | `dev` | Integrate approved features | Feature PR approval | Integration checks and release-candidate selection |
 | `automatedQA` | Run reproducible automated quality gates | Promotion PR from `dev` | Required CI checks pass |
 | `manualQA` | Hold the build selected for human acceptance | Promotion PR from `automatedQA` | Manual test record and acceptance decision |
 | `staging` | Host the production-like release candidate | Promotion PR from `manualQA` | Staging smoke, security, configuration, and rollback checks |
-| `main` | Canonical approved release source | Promotion PR from `staging` | Release notes and production approval |
+| `main` | Canonical approved release source | Promotion PR from `staging` | Release notes, owner-attention decision, and production authorization when deployment is requested |
 | `prod` | Represent exactly what is deployed | Promotion PR from `main` plus release manifest | Deployment verification and production health evidence |
 
 ## Promotion rules
 
 1. Promotions move forward one branch at a time.
-2. Every promotion requires at least two independent affected-tribe review reports, project-owner approval, and a reference to its predecessor.
+2. Every promotion requires at least two independent affected-tribe review reports, an owner-attention decision, and a reference to its predecessor. Project-owner approval is required only when the owner-attention policy triggers it.
 3. No new feature work occurs directly on a shared branch.
 4. A failed gate stops promotion; remediation happens on a new short-lived branch and restarts at `dev`.
 5. Environment-specific configuration is supplied through deployment configuration and secrets, not source-code divergence.
 6. `prod` must match the deployed production revision and immutable artifact digest recorded in the release manifest.
 7. The promotion PR records the exact source and target commit SHAs when opened and again when approved.
 8. During the current sequential MLP workflow, the source branch is frozen while its promotion PR is open.
-9. Any source or target head update invalidates reports, owner approval, and checks and requires conflict analysis plus fresh evidence.
+9. Any source or target head update invalidates reports, owner-attention decisions, project-owner approval when applicable, and checks; it requires conflict analysis plus fresh evidence.
 10. Repository configuration, deployment configuration, and secret-setting changes follow PR-equivalent review and audit controls; secret values are never recorded.
 
 ## Release manifest
@@ -67,7 +67,7 @@ Short-lived feature branches are rebased onto their target before approval. Long
 
 ## Deployment orchestration
 
-The Lead System Architect maintains the promotion state on the delivery board and presents the following before requesting each green light:
+The Lead System Architect maintains the promotion state on the delivery board. It requests a project-owner decision only when the owner-attention policy triggers it; otherwise it records an autonomous-merge decision with its rationale. Before a requested review or approval, it presents:
 
 - Source and target branch
 - Included feature PRs
@@ -75,7 +75,7 @@ The Lead System Architect maintains the promotion state on the delivery board an
 - Known risks and rollback plan
 - Deployment or promotion acceptance criteria
 
-No approval implicitly authorizes the next environment.
+No review or approval implicitly authorizes the next environment. Production deployment and rollback always require explicit authorization because they exercise external operational authority.
 
 ## Bootstrap sequence
 
