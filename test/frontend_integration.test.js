@@ -208,3 +208,15 @@ test('repository index remains an explicitly labeled static-demo entry point', (
   assert.match(clientSource, /Static Demo · Public mock data/);
   assert.match(apiSource, /\/api\/v1\/lookups\/vin/);
 });
+
+test('client demo hub links public surfaces and labels local-only operational links', () => {
+  const document = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'whats-new.html'), 'utf8');
+  const script = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'whats-new.js'), 'utf8');
+  assert.match(document, /href="blueprint\.html"/);
+  assert.match(document, /href="index\.html"/);
+  assert.match(document, /http:\/\/localhost:3000\/api\/docs\//);
+  assert.match(document, /These links require the R&amp;R application running on the presenter’s computer/);
+  assert.match(document, /Finish formal Manual QA/);
+  assert.match(script, /rr-client-ecosystem-validation/);
+  assert.match(script, /application\/json/);
+});
