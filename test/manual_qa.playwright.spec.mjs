@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 async function connect(page) {
   await page.getByRole('button', { name: /connect secure demo/i }).click();
-  await page.waitForURL('**/oauth/callback?**');
+  // The callback safely scrubs its one-time query parameters and returns to `/`.
+  // Assert the restored state, not a transient callback URL that can be missed.
   await expect(page.getByRole('heading', { name: /what type of glass/i })).toBeVisible();
 }
 
