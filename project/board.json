@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-14T23:30:00Z",
+  "updatedAt": "2026-09-15T00:00:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -21,7 +21,19 @@
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Business Analyst", "Solution Designer", "Back-end Engineer", "Security Engineer"],
       "blockedBy": ["Document authenticated MyGrant workflow", "Confirm deployment and session constraints"],
-      "featureFile": "features/executable-mygrant-lookup.json"
+      "featureFile": "features/executable_mygrant_lookup.md"
+    },
+    {
+      "id": "RR-005",
+      "title": "Authenticated API foundation",
+      "type": "Enabler",
+      "status": "in-progress",
+      "priority": "Current",
+      "outcome": "Serve mock lookup capabilities through a protected Express API using OAuth 2.0 Authorization Code with PKCE.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Back-end Engineer", "Security Engineer"],
+      "blockedBy": []
     },
     {
       "id": "RR-004",
