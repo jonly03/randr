@@ -1,15 +1,15 @@
 {
   "name": "randr-engineering-team",
   "version": "0.1.0",
-  "description": "Reusable R&R delivery specialists, including Playwright-driven QA.",
+  "description": "Reusable R&R delivery specialists, including feedback synthesis and Playwright-driven QA.",
   "author": {
     "name": "R&R Finest Auto Glass"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Randr Engineering Team",
-    "shortDescription": "Run R&R engineering, delivery, and QA specialists.",
-    "longDescription": "A reusable solo-owner delivery team: orchestration, design and security review, GitHub delivery, manual QA, Playwright QA, and issue tracking.",
+    "shortDescription": "Run R&R feedback, engineering, delivery, and QA specialists.",
+    "longDescription": "A reusable solo-owner delivery team: feedback synthesis, orchestration, design and security review, GitHub delivery, manual QA, Playwright QA, and issue tracking.",
     "developerName": "R&R Finest Auto Glass",
     "category": "Productivity",
     "capabilities": [],

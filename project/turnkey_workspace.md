@@ -13,6 +13,7 @@ The reusable R&R workspace is distributed as the repository plugin at `.agents/p
 | `playwright-qa` | Executes automated manual-QA scenarios | Mark human-only checks as passed |
 | `manual-qa-coordinator` | Guides and records human acceptance testing | Promote without release approval |
 | `issue-tracker` | Creates deduplicated, reproducible work items | File unverified or sensitive findings |
+| `feedback-synthesizer` | Converts product and engineering feedback into traceable outcomes and test changes | Silently change accepted scope or close a risk |
 
 ## QA contract
 
@@ -28,7 +29,20 @@ flowchart LR
   Lead -->|green| Delivery[GitHub delivery]
   Lead -->|yellow/red| Owner[Release owner]
   Evidence -->|accepted defect| Issues[Issue tracker]
+  Client[Client or delivery feedback] --> Synth[Feedback Synthesizer]
+  Synth --> Plan[Outcome and acceptance tests]
+  Plan --> Lead
 ```
+
+## Feedback-candidate control
+
+When a Feedback Synthesizer-triggered outcome passes internal checks, the GitHub Delivery specialist may create a short-lived `feedback-candidate/<issue>-<slug>` branch from the verified `manualQA` revision. It is deployed only to the isolated `feedback-candidate` environment for independent demo/testing. The candidate result is recorded against its GitHub Issue:
+
+- **green:** the same verified revision can enter the normal `staging → main → prod` path;
+- **yellow:** hold the candidate and request clarification or an owner decision; or
+- **red:** stop promotion and route a reproducible, appropriately redacted finding to the Issue Tracker.
+
+The branch is not a second release lane, does not bypass evidence requirements, and is removed after acceptance or rejection. GitHub Issue/PR evidence remains authoritative.
 
 ## Install and use
 

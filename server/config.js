@@ -32,6 +32,11 @@ function createConfig(env = process.env) {
       enabled: docsEnabled,
       accessKey: env.API_DOCS_ACCESS_KEY || null,
       oauthCallbackUrl: docsOAuthCallbackUrl
+    },
+    delivery: {
+      githubWebhookSecret: env.GITHUB_WEBHOOK_SECRET || null,
+      agentEventKey: env.DELIVERY_AGENT_EVENT_KEY || null,
+      maxEvents: Number(env.DELIVERY_EVENT_MAX_EVENTS || 250)
     }
   };
 }
