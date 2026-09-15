@@ -1,6 +1,6 @@
 {
   "project": "R&R Finest Auto Glass",
-  "updatedAt": "2026-09-15T03:00:00Z",
+  "updatedAt": "2026-09-15T04:00:00Z",
   "wipLimit": 2,
   "columns": [
     { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
@@ -10,6 +10,20 @@
     { "id": "done", "name": "Done", "description": "Accepted with evidence." }
   ],
   "items": [
+    {
+      "id": "RR-007.1",
+      "title": "OAuth callback asset resolution",
+      "type": "Defect",
+      "status": "done",
+      "priority": "Complete",
+      "outcome": "Load frontend assets correctly after OAuth callback in Express while preserving GitHub Pages project-path hosting.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Lead System Architect", "Front-end Engineer", "Security Engineer"],
+      "blockedBy": [],
+      "featureFile": "features/oauth_callback_asset_resolution.md",
+      "evidence": "Callback and static-host asset resolution regression tests passed with correct JavaScript and CSS content types"
+    },
     {
       "id": "RR-003",
       "title": "Executable MyGrant lookup",
