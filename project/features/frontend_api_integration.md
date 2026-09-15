@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Done
 
 ## Desired outcome
 
@@ -54,3 +54,11 @@ The client workflow obtains a demo OAuth access token with Authorization Code an
 - The current demo authorization endpoint does not authenticate a person.
 - Redirect-driven authorization can discard unsaved workflow state unless it is deliberately restored.
 - Supporting both Express and GitHub Pages must not silently downgrade an operational session to public mock data.
+
+## Evidence
+
+- Twenty-four automated tests passed.
+- Front-end Engineering implementation completed and Security Engineering accepted the remediation review.
+- OAuth callback parameters are removed from browser history before validation or token exchange on every success and failure path.
+- A live same-origin smoke test completed authorization, state round-trip, token exchange, and an authenticated catalog request.
+- The operational mock JSON route returned `404`, proving that operational lookup data is available only through the protected API.
