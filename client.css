@@ -7,6 +7,7 @@ body { min-height:100vh; margin:0; color:var(--ink); font-family:Inter,sans-seri
 .brand-name { font:800 1rem Manrope,sans-serif; color:var(--navy); line-height:1.1; }
 .brand-sub { color:var(--muted); font-size:.72rem; }
 .demo-pill { color:#176b50; background:#e7f7ef; border:1px solid #bce8d3; font-size:.75rem; }
+.demo-pill.secure-connected { color:#075c43; background:#ddf8eb; border-color:#8ed6b8; }
 .workflow { max-width:1040px; margin:auto; }
 .stepper { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
 .step { position:relative; padding:13px; border:1px solid var(--line); border-radius:12px; background:#f3f6f8; color:#9aabba; font-size:.78rem; font-weight:600; }
@@ -33,5 +34,7 @@ h1,h2,h3 { color:var(--navy); font-family:Manrope,sans-serif; }
 .part-number { color:var(--navy); font-family:Manrope,sans-serif; font-weight:800; }
 .loading-track { height:7px; background:#e6edf2; border-radius:5px; overflow:hidden; }
 .loading-bar { height:100%; width:45%; background:linear-gradient(90deg,var(--blue),#63c1ea); animation:load 1s infinite ease-in-out; }
+.connection-panel { max-width:720px; margin:auto; }
+.connection-icon { width:62px; height:62px; display:grid; place-items:center; margin:0 auto 18px; border-radius:18px; background:var(--ice); font-size:1.65rem; }
 @keyframes load { from{transform:translateX(-110%)} to{transform:translateX(240%)} }
 @media(max-width:767px){ .stepper{grid-template-columns:1fr 1fr}.step{padding:10px;font-size:.7rem}.main-card .card-body{padding:1.25rem!important} }
