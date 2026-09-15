@@ -1,8 +1,11 @@
 const path = require('node:path');
+const fs = require('node:fs');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const { rateLimit } = require('express-rate-limit');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yaml');
 const { createConfig } = require('./config');
 const { OAuthStore } = require('./oauth-store');
 const { MockLookupProvider } = require('./providers/mock-lookup-provider');
@@ -25,7 +28,21 @@ function createApp(options = {}) {
   const app = express();
 
   app.disable('x-powered-by');
-  app.use(helmet({ contentSecurityPolicy: false }));
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        baseUri: ["'self'"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+        formAction: ["'self'"],
+        frameAncestors: ["'none'"],
+        imgSrc: ["'self'", 'data:'],
+        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com']
+      }
+    }
+  }));
   app.use(cors({
     origin(origin, callback) {
       if (!origin || config.corsOrigins.includes(origin)) return callback(null, true);
@@ -37,6 +54,50 @@ function createApp(options = {}) {
   }));
   app.use(express.json({ limit: '16kb' }));
   app.use(express.urlencoded({ extended: false, limit: '16kb' }));
+
+  if (config.docs.enabled) {
+    const openApiPath = path.join(__dirname, 'openapi.yaml');
+    const openApiDocument = YAML.parse(fs.readFileSync(openApiPath, 'utf8'));
+    const setDocsSecurityHeaders = (_req, res, next) => {
+      res.set('Content-Security-Policy', [
+        "default-src 'self'",
+        "base-uri 'self'",
+        "connect-src 'self'",
+        "font-src 'self' data:",
+        "form-action 'self'",
+        "frame-ancestors 'none'",
+        "img-src 'self' data:",
+        "script-src 'self' 'unsafe-inline'",
+        "style-src 'self' 'unsafe-inline'"
+      ].join('; '));
+      return next();
+    };
+    const requireDocsAccess = (req, res, next) => {
+      if (!config.docs.accessKey || req.get('x-api-docs-key') === config.docs.accessKey) return next();
+      return res.status(401).json({
+        error: 'docs_access_denied',
+        message: 'A valid X-API-Docs-Key header is required'
+      });
+    };
+
+    app.get('/api/openapi.yaml', requireDocsAccess, (_req, res) => {
+      res.set('Cache-Control', 'no-store');
+      return res.type('application/yaml').sendFile(openApiPath);
+    });
+    app.use('/api/docs', requireDocsAccess, setDocsSecurityHeaders, swaggerUi.serve, swaggerUi.setup(openApiDocument, {
+      customSiteTitle: 'R&R Finest Auto Glass API',
+      swaggerOptions: {
+        oauth2RedirectUrl: config.docs.oauthCallbackUrl,
+        persistAuthorization: false,
+        tryItOutEnabled: true,
+        oauth: {
+          clientId: config.oauth.clientId,
+          scopes: config.oauth.scope,
+          usePkceWithAuthorizationCodeGrant: true
+        }
+      }
+    }));
+  }
 
   const authorizeLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: 'draft-8', legacyHeaders: false });
   const tokenLimiter = rateLimit({ windowMs: 60_000, limit: 20, standardHeaders: 'draft-8', legacyHeaders: false });
