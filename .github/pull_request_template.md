@@ -35,7 +35,8 @@
 
 ## Specialist reviews
 
-<!-- Repeat this block for every required reviewer; two is the minimum. -->
+<!-- Specialist reports are decision-support evidence, not authenticated GitHub approvals.
+     For the solo-owner MLP, do not treat them as a merge blocker. -->
 
 - Reviewer identity:
 - Reviewer role:
@@ -66,8 +67,8 @@
 
 ## Approval gate
 
-- [ ] At least two independent specialist reports are complete
-- [ ] Every materially affected tribe is represented
+- [ ] Specialist evidence is recorded when material to the change
+- [ ] Every materially affected tribe is represented when specialist evidence is required
 - [ ] All `changes_requested` findings are resolved and re-reviewed
 - [ ] Required automated checks pass
 - [ ] Owner-attention decision is recorded
