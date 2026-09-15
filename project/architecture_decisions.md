@@ -36,3 +36,11 @@
 - Reason: Establish the intended public-client authentication boundary before replacing the mock provider with browser automation.
 - Constraint: The in-process authorization server is for development only. Production must use an independently operated identity provider and standards-reviewed token validation.
 
+## ADR-006: Treat OpenAPI as the HTTP contract
+
+- Date: 2026-09-15
+- Status: Accepted
+- Decision: Maintain `server/openapi.yaml` as the machine-readable contract and publish Swagger UI for development testing.
+- Reason: Consumers can discover, authorize, and exercise the API without relying on undocumented implementation details.
+- Constraint: The Swagger UI and raw contract are disabled by default in production and must be explicitly enabled and access-controlled when operationally required.
+
