@@ -111,7 +111,7 @@
       "productOwner": "Product Manager",
       "engineeringOwner": "Engineering Manager",
       "specialists": ["Lead System Architect", "Cloud Engineer", "Security Engineer"],
-      "blockedBy": ["RR-016 Quality and deployment gates"]
+      "blockedBy": ["RR-016 Deployment gates"]
     },
     {
       "id": "RR-009",
