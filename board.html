@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="R&R Finest Auto Glass delivery board">
+  <title>R&R Finest Auto Glass | Delivery Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="board.css">
+</head>
+<body>
+  <header class="board-topbar">
+    <div class="container-fluid px-3 px-lg-4 py-3 d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="board-brand-mark">R&amp;R</div>
+        <div><div class="board-brand-name">Delivery Control</div><div class="board-brand-sub">Lead System Architect view</div></div>
+      </div>
+      <nav class="d-flex align-items-center gap-3 small" aria-label="Project navigation">
+        <a href="index.html">Client</a><a href="blueprint.html">Blueprint</a><strong>Board</strong>
+      </nav>
+    </div>
+  </header>
+  <main class="container-fluid px-3 px-lg-4 py-4">
+    <section class="board-heading mb-4">
+      <div><div class="board-eyebrow mb-1">R&amp;R FINEST AUTO GLASS</div><h1 class="h3 mb-1">Product delivery board</h1><p class="text-secondary mb-0">Shared progress, ownership, risks, and evidence.</p></div>
+      <div id="board-summary" class="board-summary" aria-live="polite"></div>
+    </section>
+    <div id="board-alert"></div>
+    <section id="kanban" class="kanban" aria-label="Delivery Kanban board"></section>
+    <section class="mt-4 board-note"><strong>Operating rule:</strong> Product and Engineering share feature ownership. No more than two items may be in progress at once.</section>
+  </main>
+  <script src="board.js"></script>
+</body>
+</html>
