@@ -1,0 +1,472 @@
+openapi: 3.1.0
+info:
+  title: R&R Finest Auto Glass API
+  version: 0.1.0
+  summary: Authenticated mock catalog and VIN lookup API
+  description: |
+    Development API for the R&R Finest Auto Glass workflow. Obtain an access token
+    with OAuth 2.0 Authorization Code and PKCE S256, then use it to call `/api/v1`.
+    The current lookup provider reads mock data and will later be replaced by MyGrant automation.
+servers:
+  - url: /
+    description: Current server
+tags:
+  - name: Documentation
+    description: Interactive and machine-readable API documentation
+  - name: OAuth
+    description: Development authorization server endpoints
+  - name: Catalog
+    description: Year, make, and model selection for Door Glass
+  - name: Lookup
+    description: Vehicle and compatible-glass lookup
+paths:
+  /api/docs:
+    get:
+      tags: [Documentation]
+      summary: Open the interactive Swagger UI
+      operationId: showApiDocumentation
+      security: []
+      responses:
+        '200':
+          description: Interactive Swagger UI HTML.
+          content:
+            text/html:
+              schema: { type: string }
+        '301':
+          description: Redirects to the canonical trailing-slash Swagger UI URL.
+        '401':
+          description: Documentation access key is absent or invalid when restriction is enabled.
+  /api/openapi.yaml:
+    get:
+      tags: [Documentation]
+      summary: Download the OpenAPI 3.1 contract
+      operationId: getOpenApiContract
+      security: []
+      responses:
+        '200':
+          description: Machine-readable OpenAPI contract.
+          content:
+            application/yaml:
+              schema: { type: string }
+        '401':
+          description: Documentation access key is absent or invalid when restriction is enabled.
+  /oauth/authorize:
+    get:
+      tags: [OAuth]
+      summary: Begin an authorization code flow
+      description: Issues a single-use authorization code after validating PKCE S256 parameters.
+      operationId: authorize
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/ResponseType'
+        - $ref: '#/components/parameters/ClientId'
+        - $ref: '#/components/parameters/RedirectUri'
+        - $ref: '#/components/parameters/State'
+        - $ref: '#/components/parameters/CodeChallenge'
+        - $ref: '#/components/parameters/CodeChallengeMethod'
+      responses:
+        '302':
+          description: Redirects to the registered client callback with `code` and `state`.
+          headers:
+            Location:
+              description: Registered callback URL containing the authorization response.
+              schema: { type: string, format: uri }
+        '400':
+          $ref: '#/components/responses/OAuthRequestError'
+        '401':
+          $ref: '#/components/responses/OAuthUnauthorizedClient'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /oauth/token:
+    post:
+      tags: [OAuth]
+      summary: Exchange a code and PKCE verifier for a bearer token
+      operationId: exchangeAuthorizationCode
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+            example:
+              grant_type: authorization_code
+              code: single-use-authorization-code
+              client_id: rr-client
+              redirect_uri: http://localhost:3000/api/docs/oauth2-redirect.html
+              code_verifier: '0123456789012345678901234567890123456789012'
+      responses:
+        '200':
+          description: Bearer token issued.
+          headers:
+            Cache-Control:
+              schema: { type: string, example: no-store }
+            Pragma:
+              schema: { type: string, example: no-cache }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+              example:
+                access_token: Cgqv6pPN2l66xAcZ8O0XcCBEqsXSyue08BzKxG8dRD4
+                token_type: Bearer
+                expires_in: 300
+                scope: lookup:read
+        '400':
+          $ref: '#/components/responses/OAuthRequestError'
+        '415':
+          $ref: '#/components/responses/OAuthUnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /api/v1/catalog/years:
+    get:
+      tags: [Catalog]
+      summary: List supported vehicle years
+      operationId: listYears
+      security:
+        - oauth2: [lookup:read]
+      responses:
+        '200':
+          description: Supported model years.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/YearsResponse' }
+              example: { years: ['2021', '2020', '2019'] }
+        '401': { $ref: '#/components/responses/InvalidToken' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/v1/catalog/makes:
+    get:
+      tags: [Catalog]
+      summary: List makes for a model year
+      operationId: listMakes
+      security:
+        - oauth2: [lookup:read]
+      parameters:
+        - $ref: '#/components/parameters/Year'
+      responses:
+        '200':
+          description: Makes supported for the requested year.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MakesResponse' }
+              example: { year: '2021', makes: [Jeep, Toyota] }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/InvalidToken' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/v1/catalog/models:
+    get:
+      tags: [Catalog]
+      summary: List models for a year and make
+      operationId: listModels
+      security:
+        - oauth2: [lookup:read]
+      parameters:
+        - $ref: '#/components/parameters/Year'
+        - $ref: '#/components/parameters/Make'
+      responses:
+        '200':
+          description: Models supported for the requested year and make.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ModelsResponse' }
+              example:
+                year: '2021'
+                make: Jeep
+                models: [Wrangler Unlimited Sport, Grand Cherokee]
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/InvalidToken' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/v1/lookups/vin:
+    post:
+      tags: [Lookup]
+      summary: Find compatible glass by VIN
+      description: |
+        Windshield and Back Glass require a VIN and glass type. Door Glass also
+        requires the year, make, and model selected through the catalog path first.
+      operationId: lookupGlassByVin
+      security:
+        - oauth2: [lookup:read]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VinLookupRequest' }
+            examples:
+              windshield:
+                summary: Windshield lookup
+                value: { vin: 1C4HJXDG5MW625672, glassType: Windshield }
+              doorGlass:
+                summary: Door Glass lookup after catalog selection
+                value:
+                  vin: 1C4HJXDG5MW625672
+                  glassType: Door Glass
+                  year: '2021'
+                  make: Jeep
+                  model: Wrangler Unlimited Sport
+      responses:
+        '200':
+          description: Vehicle and compatible glass parts.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VinLookupResponse' }
+              example:
+                vin: 1C4HJXDG5MW625672
+                vehicle: { year: '2021', make: Jeep, model: Wrangler Unlimited Sport }
+                glassType: Windshield
+                provider: mock
+                parts:
+                  - partNumber: FW04718GTY
+                    description: Windshield — Solar, Acoustic
+                    features: [Green tint, Acoustic interlayer]
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/InvalidToken' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth 2.0 Authorization Code flow with mandatory PKCE S256.
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            lookup:read: Read catalog and VIN lookup results
+  parameters:
+    ResponseType:
+      name: response_type
+      in: query
+      required: true
+      schema: { type: string, const: code }
+    ClientId:
+      name: client_id
+      in: query
+      required: true
+      schema: { type: string, example: rr-client }
+    RedirectUri:
+      name: redirect_uri
+      in: query
+      required: true
+      schema: { type: string, format: uri }
+    State:
+      name: state
+      in: query
+      required: true
+      description: Client-generated CSRF value containing 16 to 256 characters.
+      schema: { type: string, minLength: 16, maxLength: 256 }
+    CodeChallenge:
+      name: code_challenge
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 43
+        maxLength: 43
+        pattern: '^[A-Za-z0-9_-]+$'
+    CodeChallengeMethod:
+      name: code_challenge_method
+      in: query
+      required: true
+      schema: { type: string, const: S256 }
+    Year:
+      name: year
+      in: query
+      required: true
+      schema: { $ref: '#/components/schemas/Year' }
+    Make:
+      name: make
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 80
+        pattern: "^[A-Za-z0-9 .&'/-]+$"
+        example: Jeep
+  schemas:
+    Year:
+      type: string
+      pattern: '^(19|20)\d{2}$'
+      example: '2021'
+    TokenRequest:
+      type: object
+      additionalProperties: false
+      required: [grant_type, code, client_id, redirect_uri, code_verifier]
+      properties:
+        grant_type: { type: string, const: authorization_code }
+        code: { type: string }
+        client_id: { type: string }
+        redirect_uri: { type: string, format: uri }
+        code_verifier:
+          type: string
+          minLength: 43
+          maxLength: 128
+          pattern: '^[A-Za-z0-9._~-]+$'
+    TokenResponse:
+      type: object
+      additionalProperties: false
+      required: [access_token, token_type, expires_in, scope]
+      properties:
+        access_token: { type: string }
+        token_type: { type: string, const: Bearer }
+        expires_in: { type: integer, minimum: 1 }
+        scope: { type: string, const: 'lookup:read' }
+    YearsResponse:
+      type: object
+      additionalProperties: false
+      required: [years]
+      properties:
+        years:
+          type: array
+          items: { $ref: '#/components/schemas/Year' }
+    MakesResponse:
+      type: object
+      additionalProperties: false
+      required: [year, makes]
+      properties:
+        year: { $ref: '#/components/schemas/Year' }
+        makes:
+          type: array
+          items: { type: string }
+    ModelsResponse:
+      type: object
+      additionalProperties: false
+      required: [year, make, models]
+      properties:
+        year: { $ref: '#/components/schemas/Year' }
+        make: { type: string }
+        models:
+          type: array
+          items: { type: string }
+    VinLookupRequest:
+      oneOf:
+        - $ref: '#/components/schemas/StandardVinLookupRequest'
+        - $ref: '#/components/schemas/DoorGlassVinLookupRequest'
+    StandardVinLookupRequest:
+      type: object
+      additionalProperties: false
+      required: [vin, glassType]
+      properties:
+        vin: { $ref: '#/components/schemas/Vin' }
+        glassType: { type: string, enum: [Windshield, Back Glass] }
+    DoorGlassVinLookupRequest:
+      type: object
+      additionalProperties: false
+      required: [vin, glassType, year, make, model]
+      properties:
+        vin: { $ref: '#/components/schemas/Vin' }
+        glassType: { type: string, const: Door Glass }
+        year: { $ref: '#/components/schemas/Year' }
+        make: { type: string, minLength: 1, maxLength: 80 }
+        model: { type: string, minLength: 1, maxLength: 80 }
+    Vin:
+      type: string
+      minLength: 17
+      maxLength: 17
+      pattern: '^[A-HJ-NPR-Z0-9]{17}$'
+      example: 1C4HJXDG5MW625672
+    Vehicle:
+      type: object
+      additionalProperties: false
+      required: [year, make, model]
+      properties:
+        year: { $ref: '#/components/schemas/Year' }
+        make: { type: string }
+        model: { type: string }
+    GlassPart:
+      type: object
+      additionalProperties: false
+      required: [partNumber, description, features]
+      properties:
+        partNumber: { type: string }
+        description: { type: string }
+        features:
+          type: array
+          items: { type: string }
+    VinLookupResponse:
+      type: object
+      additionalProperties: false
+      required: [vin, vehicle, glassType, provider, parts]
+      properties:
+        vin: { $ref: '#/components/schemas/Vin' }
+        vehicle: { $ref: '#/components/schemas/Vehicle' }
+        glassType: { type: string, enum: [Windshield, Back Glass, Door Glass] }
+        provider: { type: string, example: mock }
+        parts:
+          type: array
+          items: { $ref: '#/components/schemas/GlassPart' }
+    OAuthError:
+      type: object
+      additionalProperties: false
+      required: [error, error_description]
+      properties:
+        error: { type: string }
+        error_description: { type: string }
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        message: { type: string }
+  responses:
+    OAuthRequestError:
+      description: Invalid OAuth request, grant, or unsupported grant type.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OAuthError' }
+          example: { error: invalid_request, error_description: A valid S256 code_challenge is required }
+    OAuthUnauthorizedClient:
+      description: The client identifier is unknown.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OAuthError' }
+          example: { error: unauthorized_client, error_description: Unknown client_id }
+    OAuthUnsupportedMediaType:
+      description: Token requests must use form encoding.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OAuthError' }
+          example: { error: invalid_request, error_description: Form encoding is required }
+    ValidationError:
+      description: Request validation failed.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+          example: { error: validation_error, message: year must be a four-digit year }
+    InvalidToken:
+      description: The bearer token is absent, invalid, or expired.
+      headers:
+        WWW-Authenticate:
+          schema: { type: string, example: 'Bearer realm="rr-api"' }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OAuthError' }
+          example: { error: invalid_token, error_description: A valid bearer token is required }
+    NotFound:
+      description: No vehicle matched the VIN.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+          example: { error: not_found, message: No vehicle was found for that VIN }
+    UnsupportedMediaType:
+      description: The lookup request must contain JSON.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+          example: { error: unsupported_media_type, message: JSON is required }
+    RateLimited:
+      description: Too many requests were sent in the current rate-limit window.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    InternalError:
+      description: Unexpected server failure.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+          example: { error: internal_server_error }
