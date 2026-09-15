@@ -18,7 +18,8 @@
 
 - Source:
 - Target:
-- Rebased onto target at commit:
+- Source commit SHA:
+- Target commit SHA:
 
 ## Risk and security impact
 
@@ -32,32 +33,34 @@
 
 <!-- Describe how this change can be safely reversed or disabled. -->
 
-## Specialist review 1
+## Specialist reviews
+
+<!-- Repeat this block for every required reviewer; two is the minimum. -->
 
 - Reviewer identity:
 - Reviewer role:
 - Tribe:
-- Reviewed commit SHA:
+- Reviewed source commit SHA:
+- Reviewed target commit SHA:
 - Reviewed at:
 - Decision: Pending
 - Findings:
 - Checks performed:
 
-## Specialist review 2
+## Project-owner approval
 
-- Reviewer identity:
-- Reviewer role:
-- Tribe:
-- Reviewed commit SHA:
-- Reviewed at:
-- Decision: Pending
-- Findings:
-- Checks performed:
+- Owner identity:
+- Approved source commit SHA:
+- Approved target commit SHA:
+- Approved at:
+- Residual risks accepted:
 
 ## Approval gate
 
-- [ ] Two independent specialist reports are complete
+- [ ] At least two independent specialist reports are complete
+- [ ] Every materially affected tribe is represented
 - [ ] All `changes_requested` findings are resolved and re-reviewed
 - [ ] Required automated checks pass
 - [ ] Project owner approved
+- [ ] All evidence references the current source and target SHAs
 - [ ] Promotion target and rollback path are confirmed
