@@ -62,3 +62,5 @@ The client workflow obtains a demo OAuth access token with Authorization Code an
 - OAuth callback parameters are removed from browser history before validation or token exchange on every success and failure path.
 - A live same-origin smoke test completed authorization, state round-trip, token exchange, and an authenticated catalog request.
 - The operational mock JSON route returned `404`, proving that operational lookup data is available only through the protected API.
+- RR-007.1 corrected callback asset resolution by using a repository-relative base on GitHub Pages and an origin-relative base when Express serves the operational client.
+- Regression coverage verifies callback asset URLs, JavaScript and CSS content types, and continued GitHub Pages project-path compatibility.
