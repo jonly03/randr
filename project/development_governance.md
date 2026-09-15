@@ -63,7 +63,7 @@ A PR remains a draft or unmerged while any required evidence is missing.
 
 ## Temporary specialist-agent review policy
 
-Until two human GitHub collaborators are available, at least two independent specialist agents from the affected tribe may produce review reports. Each reviewer uses a distinct agent instance without inherited reviewer context and cannot be the implementing agent. Reports are posted individually to the PR record so their task identities, timestamps, reviewed SHAs, findings, and decisions remain auditable in Git history and the PR conversation.
+Until two human GitHub collaborators are available, at least two independent specialist agents from the affected tribe may produce review reports. Each reviewer uses a distinct agent instance without inherited reviewer context and cannot be the implementing agent. Reports are posted individually to the PR record so their task identities, timestamps, reviewed SHAs, findings, and decisions remain auditable in the PR conversation. G3 must add a required check that snapshots report identifiers and decisions into append-only build or release evidence before promotion.
 
 Each report must:
 
@@ -83,7 +83,7 @@ The project owner explicitly accepts the residual identity risk for each PR when
 
 - Every specialist report, project-owner approval, and required check binds to the current source and target commit SHAs.
 - Any source update, rebase, or force-push invalidates all earlier reports, approvals, and checks.
-- A material target-branch update invalidates approval and requires conflict analysis, refreshed checks, and affected reviews.
+- Any target-branch head update invalidates approval and requires conflict analysis, refreshed checks, and affected reviews.
 - The project-owner approval record includes owner identity, timestamp, source SHA, and target SHA.
 - Branch protection must dismiss stale approvals and require approval after the latest push when those controls are available.
 
