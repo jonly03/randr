@@ -22,6 +22,7 @@ Specialist work is also sequenced. Implementation, security review, testing, and
 |---|---|---|---|---|
 | 1 | Architecture record | Establish the approved deployment and delivery direction | None | Complete |
 | 2 | RR-007 Frontend/API Integration | Browser uses OAuth PKCE and protected mock API endpoints | Step 1 | Complete |
+| 2.1 | RR-007.1 OAuth Callback Asset Resolution | Ensure callback assets load in Express without breaking the GitHub Pages project path | RR-007 | Complete |
 | 3 | RR-008 Containerize Application | Create a reproducible Playwright-ready application image | RR-007 | Ready for approval |
 | 4 | RR-009 Verify Container Locally | Prove the image, frontend, OAuth, Swagger, and API work locally | RR-008 | Planned |
 | 5 | RR-010 Prepare Render Configuration | Define staging service, environment, health checks, and secrets | RR-009 | Planned |
