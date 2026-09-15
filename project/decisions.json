@@ -1,0 +1,36 @@
+{
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "date": "2026-09-14",
+      "status": "accepted",
+      "title": "The workflow owns the lookup capability",
+      "decision": "Model VIN and glass lookup as a step within an auto-glass service request rather than as the top-level product.",
+      "reason": "Quoting, scheduling, fulfillment, invoicing, and payment can be added without rebuilding the product boundary."
+    },
+    {
+      "id": "ADR-002",
+      "date": "2026-09-14",
+      "status": "accepted",
+      "title": "Use interchangeable lookup providers",
+      "decision": "Place mock, Playwright, and future API integrations behind one lookup-service contract.",
+      "reason": "The client experience and Express routes should not change when the integration mechanism changes."
+    },
+    {
+      "id": "ADR-003",
+      "date": "2026-09-14",
+      "status": "accepted",
+      "title": "Validate the static client journey first",
+      "decision": "Use GitHub Pages and mock JSON for the first client demo before implementing the backend.",
+      "reason": "The client approved the workflow, reducing product risk before integration investment."
+    },
+    {
+      "id": "ADR-004",
+      "date": "2026-09-14",
+      "status": "accepted",
+      "title": "Track delivery as structured data",
+      "decision": "Use project/board.json as the Kanban source of truth and render it in a read-only project board.",
+      "reason": "Humans and specialized agents can update the same auditable project state."
+    }
+  ]
+}
