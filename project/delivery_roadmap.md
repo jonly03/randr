@@ -20,7 +20,7 @@ Specialist work is also sequenced. Implementation, security review, testing, and
 
 | Step | Board item | Outcome | Depends on | Execution state |
 |---|---|---|---|---|
-| G1 | RR-013 Development Governance | Establish branch, PR, review, and promotion policy | None | Review / owner approval |
+| G1 | RR-013 Development Governance | Establish branch, PR, review, and promotion policy | None | Review / mandatory owner approval (governance trigger) |
 | G2 | RR-014 Protected Long-lived Branches | Atomically create and protect `dev`, `automatedQA`, `manualQA`, `staging`, and `prod`, and protect `main` | RR-013 | Planned |
 | G3 | RR-015 Repository Quality Gates | Enforce review freshness, tests, scope, and promotion-order checks | RR-014 | Planned |
 | G4 | RR-016 Deployment Gates | Connect environment deployments, release manifests, verification, and rollback evidence | RR-015 | Planned |
