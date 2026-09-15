@@ -29,6 +29,13 @@
 
 <!-- List automated tests, manual checks, screenshots, logs, or contract validation. -->
 
+## Feedback-candidate evidence (only for `feedback-candidate/*` branches)
+
+- Feedback issue:
+- Candidate demo plan:
+- Candidate rollback revision:
+- Independent demo/testing result:
+
 ## Rollback
 
 <!-- Describe how this change can be safely reversed or disabled. -->

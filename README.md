@@ -14,6 +14,19 @@ This blueprint captures the current understanding of how R&R:
 
 Confirmed facts, partially understood stages, and open discovery areas are deliberately distinguished.
 
+## Live delivery control
+
+`/control.html` is the read-only live delivery view. GitHub Issues and Projects remain the system of record; verified GitHub webhooks and authenticated specialist events feed the control surface over Server-Sent Events.
+
+Configure these server-only values before receiving external events:
+
+```bash
+GITHUB_WEBHOOK_SECRET=<GitHub webhook secret>
+DELIVERY_AGENT_EVENT_KEY=<specialist event key>
+```
+
+Register the GitHub webhook at `/api/delivery/webhooks/github` for `workflow_run`, `pull_request`, `issues`, and `issue_comment`. The dashboard never receives either secret. See [RR-026 design](project/features/live_delivery_control.md) for the event contract and candidate-demo controls.
+
 ## Preview locally
 
 This is a dependency-free static site. Open `index.html` in a browser, or serve the folder with any static file server:

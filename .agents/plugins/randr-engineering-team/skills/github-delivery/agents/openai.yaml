@@ -1,0 +1,3 @@
+interface:
+  display_name: "GitHub Delivery"
+  short_description: "Verify PR promotions, Actions, and gates"

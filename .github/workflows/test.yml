@@ -26,3 +26,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser QA baseline
+        run: npm run test:qa

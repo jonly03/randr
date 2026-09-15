@@ -1,0 +1,4 @@
+interface:
+  display_name: "Playwright QA Engineer"
+  short_description: "Run automatable R&R manual QA with browser evidence"
+  default_prompt: "Run the Playwright-automatable scenarios from the current manual QA plan and report the evidence."

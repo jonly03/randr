@@ -1,0 +1,33 @@
+name: Feedback candidate
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches: [manualQA]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-candidate:
+    if: startsWith(github.head_ref, 'feedback-candidate/')
+    name: Validate feedback candidate
+    runs-on: ubuntu-latest
+    environment: feedback-candidate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Require candidate evidence
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$PR_BODY" | grep -Fq -- "- Feedback issue:"
+          printf '%s\n' "$PR_BODY" | grep -Fq -- "- Candidate demo plan:"
+          printf '%s\n' "$PR_BODY" | grep -Fq -- "- Candidate rollback revision:"
