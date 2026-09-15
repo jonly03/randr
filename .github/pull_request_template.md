@@ -47,7 +47,16 @@
 - Findings:
 - Checks performed:
 
-## Project-owner approval
+## Owner attention
+
+- Decision: `autonomous merge` / `owner review requested` / `owner approval required`
+- Rationale:
+- Requested at:
+- Reviewed source commit SHA:
+- Reviewed target commit SHA:
+- Owner response, if any:
+
+## Project-owner approval (only when required)
 
 - Owner identity:
 - Approved source commit SHA:
@@ -61,6 +70,7 @@
 - [ ] Every materially affected tribe is represented
 - [ ] All `changes_requested` findings are resolved and re-reviewed
 - [ ] Required automated checks pass
-- [ ] Project owner approved
+- [ ] Owner-attention decision is recorded
+- [ ] Project owner approved when required
 - [ ] All evidence references the current source and target SHAs
 - [ ] Promotion target and rollback path are confirmed
