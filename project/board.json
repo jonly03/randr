@@ -1,0 +1,64 @@
+{
+  "project": "R&R Finest Auto Glass",
+  "updatedAt": "2026-09-14T23:30:00Z",
+  "wipLimit": 2,
+  "columns": [
+    { "id": "discovery", "name": "Discovery", "description": "Clarify the problem, rules, risks, and expected outcome." },
+    { "id": "ready", "name": "Ready", "description": "Accepted, sized, and ready for implementation." },
+    { "id": "in-progress", "name": "In Progress", "description": "Actively being built. WIP limit: 2." },
+    { "id": "review", "name": "Review / Demo", "description": "Technical review and client acceptance." },
+    { "id": "done", "name": "Done", "description": "Accepted with evidence." }
+  ],
+  "items": [
+    {
+      "id": "RR-003",
+      "title": "Executable MyGrant lookup",
+      "type": "Feature",
+      "status": "discovery",
+      "priority": "Next",
+      "outcome": "Return compatible glass parts from MyGrant using a real automated lookup.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Business Analyst", "Solution Designer", "Back-end Engineer", "Security Engineer"],
+      "blockedBy": ["Document authenticated MyGrant workflow", "Confirm deployment and session constraints"],
+      "featureFile": "features/executable-mygrant-lookup.json"
+    },
+    {
+      "id": "RR-004",
+      "title": "Delivery control board",
+      "type": "Enabler",
+      "status": "done",
+      "priority": "Complete",
+      "outcome": "Create a shared source of truth for feature progress, ownership, risks, and decisions.",
+      "productOwner": "Lead System Architect",
+      "engineeringOwner": "Lead System Architect",
+      "specialists": ["UI Developer"],
+      "blockedBy": []
+    },
+    {
+      "id": "RR-002",
+      "title": "Client glass lookup prototype",
+      "type": "Feature",
+      "status": "done",
+      "priority": "Complete",
+      "outcome": "Validate the service-intake workflow with the client before backend investment.",
+      "productOwner": "Product Manager",
+      "engineeringOwner": "Engineering Manager",
+      "specialists": ["Solution Designer", "UX Designer", "UI Developer"],
+      "blockedBy": [],
+      "evidence": "Client demo approved on September 14, 2026"
+    },
+    {
+      "id": "RR-001",
+      "title": "Business process blueprint",
+      "type": "Discovery",
+      "status": "done",
+      "priority": "Complete",
+      "outcome": "Create a shared view of the auto-glass job lifecycle and open discovery questions.",
+      "productOwner": "Business Analyst",
+      "engineeringOwner": "Lead System Architect",
+      "specialists": ["Solution Designer", "UX Designer"],
+      "blockedBy": []
+    }
+  ]
+}
