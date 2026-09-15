@@ -56,3 +56,13 @@
 - Extraction rule: Separate Playwright into a worker only when measured latency, concurrency, failure isolation, security, or independent-scaling requirements justify the additional distributed-system complexity.
 - Delivery rule: Execute the roadmap sequentially and obtain the project owner's explicit approval before beginning every step.
 
+## ADR-008: Separate operational and static demonstration modes
+
+- Date: 2026-09-15
+- Status: Accepted
+- Decision: The repository `index.html` defaults to an explicitly labeled Static Demo for GitHub Pages, while Express injects Operational mode when serving the same client interface.
+- Operational rule: Operational mode uses OAuth PKCE and protected `/api/v1` endpoints exclusively. It never reads or silently falls back to public mock JSON.
+- Static rule: Static Demo mode may read the public mock JSON but must identify that behavior visibly to the user.
+- Token rule: Keep the short-lived access token in browser memory only. Store only the single-use OAuth transaction and minimal workflow snapshot in `sessionStorage` across the redirect.
+- Reason: Preserve the approved public demonstration while creating an unambiguous, secure integration path for the modular monolith.
+
