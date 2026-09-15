@@ -200,6 +200,7 @@ function createApp(options = {}) {
       if (error) return next(error);
       const clientId = config.oauth.clientId.replace(/[^A-Za-z0-9._~-]/g, '');
       const operationalDocument = document
+        .replace('<base href="./">', '<base href="/">')
         .replace('data-runtime-mode="static-demo"', 'data-runtime-mode="operational"')
         .replace('data-oauth-client-id="rr-client"', `data-oauth-client-id="${clientId}"`);
       res.set('Cache-Control', 'no-store');
