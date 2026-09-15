@@ -57,9 +57,9 @@ Final approval does not modify the candidate manifest. It is retained as an immu
 
 ## Emergency rollback
 
-The project owner and Engineering Manager may jointly authorize an immediate hosting-platform rollback to the manifest's named verified artifact when active production harm makes the normal PR sequence unsafe. The operator records identities, reason, affected release, selected digest, and timestamp before execution when possible, and immediately afterward otherwise.
+Two distinct named human principals—the project owner and an authenticated Engineering Manager or pre-designated emergency delegate—must jointly authorize an immediate hosting-platform rollback to the manifest's named verified artifact when active production harm makes the normal PR sequence unsafe. The operator records both identities, their authentication/authorization record, reason, affected release, selected digest, and timestamp in the immutable operational log before execution when possible, and immediately afterward otherwise.
 
-Post-rollback health verification is mandatory. `prod` and the release manifest must be reconciled through a PR within 24 hours. Until reconciliation completes, the board displays an active production incident and no unrelated promotion proceeds.
+Until two distinct human principals are formally assigned, an agent must not execute an out-of-band rollback. It presents the incident and the last verified rollback artifact to the project owner for explicit authorization and records this staffing limitation as residual risk. Post-rollback health verification is mandatory. `prod` and the release manifest must be reconciled through a PR within 24 hours. Until reconciliation completes, the board displays an active production incident and no unrelated promotion proceeds.
 
 ## Rebase policy
 
