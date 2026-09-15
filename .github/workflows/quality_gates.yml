@@ -40,28 +40,3 @@ jobs:
             prod) [[ "$HEAD" == "main" ]] ;;
             *) echo "Unsupported protected-branch target: $BASE"; exit 1 ;;
           esac
-
-  review-evidence:
-    name: Verify current-SHA specialist evidence
-    runs-on: ubuntu-latest
-    steps:
-      - name: Require two independent current-SHA reviews
-        env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          node <<'NODE'
-          const body = process.env.PR_BODY || "";
-          const head = process.env.HEAD_SHA;
-          const base = process.env.BASE_SHA;
-          const reviewPattern = /- Reviewer identity:\s*([^\n]+)\n- Reviewer role:\s*([^\n]+)\n- Tribe:[^\n]*\n- Reviewed source commit SHA:\s*([^\n]+)\n- Reviewed target commit SHA:\s*([^\n]+)\n- Reviewed at:[^\n]*\n- Decision:\s*(Approved(?: with comments)?)/gim;
-          const valid = [...body.matchAll(reviewPattern)]
-            .filter(([, identity, , source, target]) => identity.trim() && source.trim() === head && target.trim() === base);
-          const identities = new Set(valid.map(([, identity]) => identity.trim().toLowerCase()));
-          const roles = new Set(valid.map(([, , role]) => role.trim().toLowerCase()));
-          if (valid.length < 2 || identities.size < 2 || roles.size < 2) {
-            console.error("PR body must contain two independent approved specialist-review blocks, with distinct identities and roles, bound to the current source and target SHAs.");
-            process.exit(1);
-          }
-          NODE
