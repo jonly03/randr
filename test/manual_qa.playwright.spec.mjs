@@ -42,3 +42,22 @@ test('MQ-07: invalid VIN is rejected before lookup', async ({ page }) => {
   await page.getByRole('button', { name: /search compatible back glass/i }).click();
   await expect(page.getByRole('alert')).toContainText(/valid 17-character vin/i);
 });
+
+test('client ecosystem hub renders responsively and exports validation', async ({ page }) => {
+  await page.goto('/whats-new.html');
+  await expect(page.getByRole('heading', { name: /from a shared process map/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /open business blueprint/i })).toHaveAttribute('href', 'blueprint.html');
+  await expect(page.getByText(/require the R&R application running on the presenter’s computer/i)).toBeVisible();
+
+  await page.getByLabel('Yes').first().check();
+  await page.getByLabel(/reviewer name/i).fill('Client reviewer');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: /export validation json/i }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^rr-client-validation-\d{4}-\d{2}-\d{2}\.json$/);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /from a shared process map/i })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
