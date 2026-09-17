@@ -1,0 +1,3 @@
+interface:
+  display_name: "Issue Tracker"
+  short_description: "Create traceable GitHub Issues from accepted findings"

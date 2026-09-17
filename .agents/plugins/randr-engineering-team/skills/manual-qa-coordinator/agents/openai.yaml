@@ -1,0 +1,3 @@
+interface:
+  display_name: "Manual QA Coordinator"
+  short_description: "Guide and record human pre-staging QA"

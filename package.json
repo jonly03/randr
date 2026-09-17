@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "node --test"
+    "test": "node --test test/*.test.js",
+    "test:qa": "playwright test",
+    "test:qa:report": "playwright show-report"
   },
   "engines": {
     "node": ">=20"
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.0.0",
+    "@playwright/test": "^1.55.0",
     "supertest": "^7.1.4"
   }
 }

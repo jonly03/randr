@@ -9,6 +9,7 @@ const YAML = require('yaml');
 const { createConfig } = require('./config');
 const { OAuthStore } = require('./oauth-store');
 const { MockLookupProvider } = require('./providers/mock-lookup-provider');
+const { DeliveryEventStore, classifyGitHubEvent, safeEqual, verifyGitHubSignature } = require('./delivery-events');
 
 const VIN_PATTERN = /^[A-HJ-NPR-Z0-9]{17}$/;
 const GLASS_TYPES = new Set(['Windshield', 'Back Glass', 'Door Glass']);
@@ -25,6 +26,7 @@ function createApp(options = {}) {
   const provider = options.provider || new MockLookupProvider(
     path.join(__dirname, '..', 'mock-server', 'lookup-data.json')
   );
+  const deliveryEvents = options.deliveryEvents || new DeliveryEventStore({ maxEvents: config.delivery.maxEvents });
   const app = express();
 
   app.disable('x-powered-by');
@@ -52,8 +54,47 @@ function createApp(options = {}) {
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Authorization', 'Content-Type']
   }));
+  // Webhooks need their exact bytes for HMAC verification. This route deliberately
+  // runs before JSON parsing and never exposes the configured secret to a browser.
+  app.post('/api/delivery/webhooks/github', express.raw({ type: 'application/json', limit: '256kb' }), (req, res) => {
+    if (!config.delivery.githubWebhookSecret) return res.status(503).json({ error: 'webhook_not_configured' });
+    const signature = req.get('x-hub-signature-256');
+    if (!verifyGitHubSignature(req.body, signature, config.delivery.githubWebhookSecret)) {
+      return res.status(401).json({ error: 'invalid_webhook_signature' });
+    }
+    let payload;
+    try { payload = JSON.parse(req.body.toString('utf8')); } catch (_error) { return res.status(400).json({ error: 'invalid_webhook_payload' }); }
+    const event = classifyGitHubEvent(req.get('x-github-event'), payload);
+    if (!event) return res.status(202).json({ accepted: true, ignored: true });
+    const result = deliveryEvents.publish({ ...event, source: 'github', occurredAt: payload.workflow_run?.updated_at || payload.pull_request?.updated_at || payload.issue?.updated_at });
+    return res.status(result.duplicate ? 200 : 202).json({ accepted: true, duplicate: result.duplicate });
+  });
   app.use(express.json({ limit: '16kb' }));
   app.use(express.urlencoded({ extended: false, limit: '16kb' }));
+
+  const deliveryReadLimiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false });
+  const deliveryWriteLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: 'draft-8', legacyHeaders: false });
+  const requireDeliveryAgent = (req, res, next) => {
+    const key = req.get('x-delivery-agent-key') || '';
+    if (!config.delivery.agentEventKey || !safeEqual(key, config.delivery.agentEventKey)) return res.status(401).json({ error: 'delivery_agent_unauthorized' });
+    return next();
+  };
+  app.get('/api/delivery/snapshot', deliveryReadLimiter, (_req, res) => res.set('Cache-Control', 'no-store').json(deliveryEvents.snapshot()));
+  app.get('/api/delivery/stream', deliveryReadLimiter, (req, res) => {
+    res.status(200).set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
+    res.flushHeaders();
+    const send = (name, payload) => res.write(`event: ${name}\ndata: ${JSON.stringify(payload)}\n\n`);
+    send('snapshot', deliveryEvents.snapshot());
+    const unsubscribe = deliveryEvents.subscribe((event) => send('delivery-event', event));
+    const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 25_000);
+    req.on('close', () => { clearInterval(heartbeat); unsubscribe(); });
+  });
+  app.post('/api/delivery/events', deliveryWriteLimiter, requireDeliveryAgent, (req, res) => {
+    const { id, type, signal, headline, summary, url, subject, source, occurredAt } = req.body || {};
+    if (![id, type, headline].every((value) => typeof value === 'string' && value.length > 0)) return res.status(400).json({ error: 'invalid_delivery_event' });
+    const result = deliveryEvents.publish({ id, type, signal, headline, summary, url, subject, source: source || 'specialist', occurredAt });
+    return res.status(result.duplicate ? 200 : 201).json({ duplicate: result.duplicate, event: result.event });
+  });
 
   if (config.docs.enabled) {
     const openApiPath = path.join(__dirname, 'openapi.yaml');
@@ -208,7 +249,7 @@ function createApp(options = {}) {
     });
   };
   app.get(['/', '/index.html', '/oauth/callback'], sendOperationalClient);
-  for (const fileName of ['client.css', 'client.js', 'oauth-client.js', 'api-client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html']) {
+  for (const fileName of ['client.css', 'client.js', 'oauth-client.js', 'api-client.js', 'board.html', 'board.css', 'board.js', 'blueprint.html', 'control.html', 'control.css', 'control.js']) {
     app.get(`/${fileName}`, sendPublicFile(fileName));
   }
   // Project JSON remains available to the read-only delivery board. Operational

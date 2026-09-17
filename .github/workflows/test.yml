@@ -1,0 +1,32 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - dev
+      - automatedQA
+      - manualQA
+      - staging
+      - main
+      - prod
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Install and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser QA baseline
+        run: npm run test:qa

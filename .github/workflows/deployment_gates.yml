@@ -1,0 +1,68 @@
+name: Deployment gates
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - automatedQA
+      - manualQA
+      - staging
+      - main
+      - prod
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  deployment-evidence:
+    name: Verify deployment evidence
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate evidence for the target environment
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+
+          require_field() {
+            local field="$1"
+            if ! printf '%s\n' "$PR_BODY" | grep -Fq -- "$field"; then
+              echo "Missing required PR evidence field: $field"
+              exit 1
+            fi
+          }
+
+          case "$BASE" in
+            automatedQA)
+              require_field "- Automated verification:"
+              ;;
+            manualQA)
+              require_field "- Automated verification:"
+              require_field "- Manual QA plan:"
+              ;;
+            staging)
+              require_field "- Manual QA result:"
+              require_field "- Staging deployment plan:"
+              require_field "- Rollback revision:"
+              ;;
+            main)
+              require_field "- Staging verification:"
+              require_field "- Release candidate:"
+              require_field "- Rollback revision:"
+              ;;
+            prod)
+              require_field "- Release manifest:"
+              require_field "- Immutable artifact digest:"
+              require_field "- Production authorization:"
+              require_field "- Rollback revision:"
+              ;;
+            *)
+              echo "Unsupported deployment-gate target: $BASE"
+              exit 1
+              ;;
+          esac
+
+          echo "Deployment evidence is present for promotion from $HEAD to $BASE."

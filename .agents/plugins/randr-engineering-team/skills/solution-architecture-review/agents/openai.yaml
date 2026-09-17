@@ -1,0 +1,3 @@
+interface:
+  display_name: "Solution Architecture Review"
+  short_description: "Review modules, flows, and delivery design"
